@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"="width=device-width, initial-scale=1.0">
+    <title>BeeHappy - Gestion Apicole</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='50' cy='55' rx='28' ry='32' fill='%23FFA500'/%3E%3Cellipse cx='50' cy='45' rx='22' ry='25' fill='%23FFD700'/%3E%3Cpath d='M30 45 Q25 35 30 30 L35 35 Z' fill='%23FFF'/%3E%3Cpath d='M70 45 Q75 35 70 30 L65 35 Z' fill='%23FFF'/%3E%3Ccircle cx='42' cy='45' r='3' fill='%23000'/%3E%3Ccircle cx='58' cy='45' r='3' fill='%23000'/%3E%3Cpath d='M40 55 Q50 62 60 55' stroke='%23000' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M30 50 L20 45 L30 40 Z' fill='%23E8E8E8' opacity='0.7'/%3E%3Cpath d='M70 50 L80 45 L70 40 Z' fill='%23E8E8E8' opacity='0.7'/%3E%3Cpath d='M35 40 L50 35 L65 40 M35 50 L50 45 L65 50 M35 60 L50 55 L65 60' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        honey: {
+                            50: '#FFFBEB',
+                            100: '#FEF3C7',
+                            200: '#FDE68A',
+                            300: '#FCD34D',
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            700: '#B45309',
+                            800: '#92400E',
+                            900: '#78350F',
+                        },
+                        bee: {
+                            50: '#FFF7ED',
+                            100: '#FFEDD5',
+                            200: '#FED7AA',
+                            300: '#FDBA74',
+                            400: '#FB923C',
+                            500: '#F97316',
+                            600: '#EA580C',
+                            700: '#C2410C',
+                            800: '#9A3412',
+                            900: '#7C2D12',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-honey-50">
+
+<!-- Application principale -->
+<div x-data="app()" x-cloak>
+
+    <!-- Page de Login -->
+    <div x-show="currentView === 'login'" class="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-honey-100 via-bee-100 to-honey-200">
+        <div class="max-w-md w-full bg-white rounded-lg shadow-2xl p-8 border-4 border-honey-400">
+            <!-- Logo BeeHappy -->
+            <div class="flex justify-center mb-6">
+                <img src="images/bee.png" alt="BeeHappy logo" style="max-width:150px">
+            </div>
+
+            <h1 class="text-3xl font-bold text-honey-800 mb-2 text-center">BeeHappy</h1>
+            <p class="text-honey-600 text-center mb-6">Gestion Apicole</p>
+
+            <form @submit.prevent="handleLogin" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Nom d'utilisateur
+                    </label>
+                    <input
+                            type="text"
+                            x-model="credentials.username"
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Entrez votre identifiant">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Mot de passe
+                    </label>
+                    <input
+                            type="password"
+                            x-model="credentials.password"
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Entrez votre mot de passe">
+                </div>
+
+                <div x-show="error" class="text-red-600 text-sm" x-text="error"></div>
+
+                <button
+                        type="submit"
+                        :disabled="isLoading"
+                        class="w-full bg-gradient-to-r from-honey-500 to-bee-500 text-white py-2 rounded-md hover:from-honey-600 hover:to-bee-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all shadow-md">
+                    <span x-show="!isLoading">Se connecter</span>
+                    <span x-show="isLoading">Connexion...</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application principale (après login) -->
+    <div x-show="currentView !== 'login'" class="min-h-screen">
+
+        <!-- Navigation -->
+        <nav class="bg-gradient-to-r from-honey-500 to-bee-600 text-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center space-x-8">
+                        <!-- Logo mini -->
+                        <div class="flex items-center space-x-2">
+                            <img src="images/bee.png" alt="BeeHappy logo" style="max-width:50px">
+                            <h1 class="text-xl font-bold">BeeHappy</h1>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button
+                                    @click="navigateTo('dashboard')"
+                                    :class="currentView === 'dashboard' ? 'bg-honey-700' : 'hover:bg-honey-600'"
+                                    class="px-4 py-2 rounded transition">
+                                📊 Dashboard
+                            </button>
+                            <button
+                                    @click="navigateTo('customers')"
+                                    :class="currentView === 'customers' ? 'bg-honey-700' : 'hover:bg-honey-600'"
+                                    class="px-4 py-2 rounded transition">
+                                👥 Clients
+                            </button>
+                            <button
+                                    @click="navigateTo('products')"
+                                    :class="currentView === 'products' ? 'bg-honey-700' : 'hover:bg-honey-600'"
+                                    class="px-4 py-2 rounded transition">
+                                🍯 Produits
+                            </button>
+                            <button
+                                    @click="navigateTo('stock')"
+                                    :class="currentView === 'stock' ? 'bg-honey-700' : 'hover:bg-honey-600'"
+                                    class="px-4 py-2 rounded transition">
+                                📦 Stock
+                            </button>
+                        </div>
+                    </div>
+                    <button
+                            @click="handleLogout"
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded transition shadow-md font-medium">
+                        🚪 Déconnexion
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="max-w-7xl mx-auto px-4 py-8 pb-20">
+
+            <!-- Dashboard -->
+            <div x-show="currentView === 'dashboard'">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Tableau de bord</h2>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <p class="text-gray-600">Les statistiques seront disponibles prochainement.</p>
+                </div>
+            </div>
+
+            <!-- CRUD Clients -->
+            <div x-show="currentView === 'customers'">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-honey-800">Gestion des Clients</h2>
+                    <button
+                            @click="openCustomerForm()"
+                            class="bg-gradient-to-r from-honey-500 to-bee-500 text-white px-4 py-2 rounded-md hover:from-honey-600 hover:to-bee-600 transition-all shadow-md">
+                        ➕ Nouveau Client
+                    </button>
+                </div>
+
+                <!-- Message d'erreur global -->
+                <div x-show="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <span x-text="error"></span>
+                </div>
+
+                <!-- Loading -->
+                <div x-show="isLoading" class="text-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-honey-600"></div>
+                    <p class="text-gray-600 mt-2">Chargement...</p>
+                </div>
+
+                <!-- Tableau des clients -->
+                <div x-show="!isLoading && !showCustomerForm" class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prénom</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Téléphone</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ville</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                        <template x-for="customer in customers" :key="customer.id">
+                            <tr class="hover:bg-gray-50" @mouseenter="hoveredCustomer = customer" @mouseleave="hoveredCustomer = null">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" x-text="customer.firstname"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" x-text="customer.lastname"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" x-text="customer.email || '-'"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" x-text="customer.phone || '-'"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" x-text="customer.city || '-'"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                                    <button
+                                            @click="viewCustomer(customer)"
+                                            class="text-honey-600 hover:text-honey-800 font-medium">
+                                        👁️ Voir
+                                    </button>
+                                    <button
+                                            @click="editCustomer(customer)"
+                                            class="text-bee-600 hover:text-bee-800 font-medium">
+                                        ✏️ Éditer
+                                    </button>
+                                    <button
+                                            @click="deleteCustomer(customer.id)"
+                                            class="text-red-600 hover:text-red-800 font-medium">
+                                        🗑️ Supprimer
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+
+                    <!-- Message si aucun client -->
+                    <div x-show="customers.length === 0" class="text-center py-8 text-gray-500">
+                        Aucun client enregistré
+                    </div>
+                </div>
+
+                <!-- Formulaire Client -->
+                <div x-show="showCustomerForm" class="bg-white rounded-lg shadow-xl p-6 border-2 border-honey-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-honey-800" x-text="selectedCustomer?.id ? '✏️ Modifier le client' : '➕ Nouveau client'"></h3>
+                        <button
+                                @click="closeCustomerForm()"
+                                class="text-gray-500 hover:text-gray-700">
+                            ✕
+                        </button>
+                    </div>
+
+                    <form @submit.prevent="saveCustomer" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Prénom <span class="text-red-500">*</span>
+                                </label>
+                                <input
+                                        type="text"
+                                        x-model="customerForm.firstname"
+                                        required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Nom <span class="text-red-500">*</span>
+                                </label>
+                                <input
+                                        type="text"
+                                        x-model="customerForm.lastname"
+                                        required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input
+                                    type="email"
+                                    x-model="customerForm.email"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                            <input
+                                    type="tel"
+                                    x-model="customerForm.phone"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Rue</label>
+                            <input
+                                    type="text"
+                                    x-model="customerForm.street"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Code postal</label>
+                                <input
+                                        type="text"
+                                        x-model="customerForm.postalCode"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Ville</label>
+                                <input
+                                        type="text"
+                                        x-model="customerForm.city"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button
+                                    type="button"
+                                    @click="closeCustomerForm()"
+                                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
+                                Annuler
+                            </button>
+                            <button
+                                    type="submit"
+                                    :disabled="isLoading"
+                                    class="px-4 py-2 bg-gradient-to-r from-honey-500 to-bee-500 text-white rounded-md hover:from-honey-600 hover:to-bee-600 disabled:bg-gray-400 transition-all shadow-md">
+                                <span x-show="!isLoading">💾 Enregistrer</span>
+                                <span x-show="isLoading">Enregistrement...</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal de détail client -->
+                <div x-show="showCustomerDetail"
+                     @click.self="showCustomerDetail = false"
+                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 border-4 border-honey-400">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-honey-800">👤 Détails du client</h3>
+                            <button
+                                    @click="showCustomerDetail = false"
+                                    class="text-gray-500 hover:text-gray-700 text-2xl">
+                                ✕
+                            </button>
+                        </div>
+
+                        <template x-if="selectedCustomer">
+                            <div class="space-y-3">
+                                <div>
+                                    <span class="text-sm text-gray-500">Nom complet:</span>
+                                    <p class="font-medium text-lg" x-text="`${selectedCustomer.firstname} ${selectedCustomer.lastname}`"></p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">Email:</span>
+                                    <p class="font-medium" x-text="selectedCustomer.email || '-'"></p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">Téléphone:</span>
+                                    <p class="font-medium" x-text="selectedCustomer.phone || '-'"></p>
+                                </div>
+                                <div>
+                                    <span class="text-sm text-gray-500">Adresse:</span>
+                                    <p class="font-medium" x-text="formatAddress(selectedCustomer)"></p>
+                                </div>
+                                <div class="pt-2 border-t">
+                                    <span class="text-sm text-gray-500">Créé le:</span>
+                                    <p class="font-medium text-sm" x-text="formatDate(selectedCustomer.createdAt)"></p>
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="mt-6 flex justify-end">
+                            <button
+                                    @click="showCustomerDetail = false"
+                                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                                Fermer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produits (placeholder) -->
+            <div x-show="currentView === 'products'">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Gestion des Produits</h2>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <p class="text-gray-600">Module à venir...</p>
+                </div>
+            </div>
+
+            <!-- Stock (placeholder) -->
+            <div x-show="currentView === 'stock'">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Gestion du Stock</h2>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <p class="text-gray-600">Module à venir...</p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bas de page avec informations techniques -->
+        <footer class="bg-honey-100 border-t-2 border-honey-300 py-3 px-4 fixed bottom-0 left-0 right-0">
+            <div class="max-w-7xl mx-auto">
+                <div x-show="hoveredCustomer || (showCustomerForm && selectedCustomer)" class="text-sm text-honey-800">
+                    <template x-if="hoveredCustomer">
+                        <div>
+                            <span class="font-semibold">ID:</span> <span x-text="hoveredCustomer.id"></span>
+                            <span class="mx-2">•</span>
+                            <span class="font-semibold">Créé par:</span> <span x-text="hoveredCustomer.createdBy || '-'"></span>
+                            <span class="mx-2">•</span>
+                            <span class="font-semibold">Créé le:</span> <span x-text="formatDateTime(hoveredCustomer.createdAt)"></span>
+                            <template x-if="hoveredCustomer.modifiedAt">
+                                    <span>
+                                        <span class="mx-2">•</span>
+                                        <span class="font-semibold">Modifié le:</span> <span x-text="formatDateTime(hoveredCustomer.modifiedAt)"></span>
+                                        <span class="mx-2">•</span>
+                                        <span class="font-semibold">Par:</span> <span x-text="hoveredCustomer.modifiedBy || '-'"></span>
+                                    </span>
+                            </template>
+                        </div>
+                    </template>
+                    <template x-if="!hoveredCustomer && showCustomerForm && selectedCustomer">
+                        <div>
+                            <span class="font-semibold">ID:</span> <span x-text="selectedCustomer.id"></span>
+                            <span class="mx-2">•</span>
+                            <span class="font-semibold">Créé par:</span> <span x-text="selectedCustomer.createdBy || '-'"></span>
+                            <span class="mx-2">•</span>
+                            <span class="font-semibold">Créé le:</span> <span x-text="formatDateTime(selectedCustomer.createdAt)"></span>
+                            <template x-if="selectedCustomer.modifiedAt">
+                                    <span>
+                                        <span class="mx-2">•</span>
+                                        <span class="font-semibold">Modifié le:</span> <span x-text="formatDateTime(selectedCustomer.modifiedAt)"></span>
+                                        <span class="mx-2">•</span>
+                                        <span class="font-semibold">Par:</span> <span x-text="selectedCustomer.modifiedBy || '-'"></span>
+                                    </span>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+                <div x-show="!hoveredCustomer && !(showCustomerForm && selectedCustomer)" class="text-sm text-honey-700 text-center">
+                    BeeHappy v1.0 - Gestion Apicole
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="js/honeyApp.js"></script>
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
+
+</body>
+</html>

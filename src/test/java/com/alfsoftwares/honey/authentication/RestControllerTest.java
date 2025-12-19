@@ -3,8 +3,7 @@ package com.alfsoftwares.honey.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.alfsoftwares.honey.authentication.domain.usecase.CreateToken;
-import jakarta.inject.Inject;
+import com.alfsoftwares.honey.api.authentication.domain.usecase.CreateToken;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -26,7 +25,6 @@ public class RestControllerTest {
   private final MockMvc mockMvc;
   private final CreateToken createToken;
 
-  @Inject
   public RestControllerTest(MockMvc mockMvc, CreateToken createToken) {
     this.mockMvc = mockMvc;
     this.createToken = createToken;
