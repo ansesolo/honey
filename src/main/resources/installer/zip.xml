@@ -1,0 +1,36 @@
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 https://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    <id>zip</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>app</outputDirectory>
+            <includes>
+                <include>beeHappy*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*.original</exclude>
+            </excludes>
+        </fileSet>
+
+        <fileSet>
+            <directory>F:\Dev\AlfSoftwares\honey\minimoi</directory>
+            <outputDirectory>runtime</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>src/main/resources/installer</directory>
+            <outputDirectory>.</outputDirectory>
+            <includes>
+                <include>*.bat</include>
+            </includes>
+            <filtered>true</filtered>
+        </fileSet>
+    </fileSets>
+</assembly>

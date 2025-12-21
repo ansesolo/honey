@@ -109,6 +109,5 @@ public class ProductEntity extends NamedEntity {
     public ProductEntity build() {
       return new ProductEntity(this);
     }
-
   }
 }
