@@ -9,4 +9,8 @@ public interface CustomerGateway {
   List<CustomerEntity> findAll();
 
   Optional<CustomerEntity> findById(final Long id);
+
+  CustomerEntity save(CustomerEntity customer);
+
+  void deleteById(Long id);
 }

@@ -8,6 +8,8 @@ public class StockEntity extends BaseEntity {
   private ProductEntity product;
   private BigDecimal quantity;
 
+  public StockEntity() {}
+
   public ProductEntity getProduct() {
     return product;
   }

@@ -15,6 +15,8 @@ public class ProductEntity extends NamedEntity {
   private ProductCategory category;
   private Map<ProductAttributes, Object> attributes;
 
+  public ProductEntity() {}
+
   private ProductEntity(ProductBuilder builder) {
     this.setId(builder.id);
     this.setCreatedAt(ZonedDateTime.now());

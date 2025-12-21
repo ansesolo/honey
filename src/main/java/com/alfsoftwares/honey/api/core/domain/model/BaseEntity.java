@@ -1,12 +1,17 @@
 package com.alfsoftwares.honey.api.core.domain.model;
 
-import jakarta.annotation.Generated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import java.time.ZonedDateTime;
 
 /** Entité de base. On va gérer ici tout ce qui est commun aux entités */
+@MappedSuperclass
 public abstract class BaseEntity {
 
-  @Generated({})
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
   private long id;
 
   private String createdBy;

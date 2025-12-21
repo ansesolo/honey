@@ -2,16 +2,15 @@ package com.alfsoftwares.honey.api.customer;
 
 import com.alfsoftwares.honey.api.customer.application.model.CustomerEntityModel;
 import com.alfsoftwares.honey.api.customer.domain.model.CustomerEntity;
+import com.alfsoftwares.honey.api.customer.domain.model.RequestCustomer;
+import com.alfsoftwares.honey.api.customer.domain.port.in.CUDCustomerAdapter;
 import com.alfsoftwares.honey.api.customer.domain.port.in.SearchCustomerAdapter;
+import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @ExposesResourceFor(CustomerEntity.class)
@@ -19,9 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerRestController implements CustomerRestControllerDocumentation {
 
   private final SearchCustomerAdapter searchCustomerAdapter;
+  private final CUDCustomerAdapter cudCustomerAdapter;
 
-  public CustomerRestController(final SearchCustomerAdapter searchCustomerAdapter) {
+  public CustomerRestController(
+      final SearchCustomerAdapter searchCustomerAdapter,
+      final CUDCustomerAdapter cudCustomerAdapter) {
     this.searchCustomerAdapter = searchCustomerAdapter;
+    this.cudCustomerAdapter = cudCustomerAdapter;
   }
 
   @GetMapping
@@ -35,10 +38,36 @@ public class CustomerRestController implements CustomerRestControllerDocumentati
   @GetMapping(path = "/{id}")
   @PreAuthorize("hasRole('USER')")
   public ResponseEntity<CustomerEntityModel> getCustomer(@PathVariable Long id) {
-    Optional<CustomerEntity> customer = searchCustomerAdapter.getCustomer(id);
+    CustomerEntity customer = searchCustomerAdapter.getCustomer(id);
 
-    return customer
-        .map(entity -> ResponseEntity.ok().body(new CustomerEntityModel(entity)))
-        .orElseGet(() -> ResponseEntity.notFound().build());
+    return ResponseEntity.ok().body(new CustomerEntityModel(customer));
+  }
+
+  @PostMapping()
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<CustomerEntityModel> createCustomer(
+      @Valid @RequestBody RequestCustomer customer) {
+    CustomerEntity saved = cudCustomerAdapter.createCustomer(customer);
+
+    CustomerEntityModel model = new CustomerEntityModel(saved);
+
+    return ResponseEntity.created(model.getRequiredLink("self").toUri()).body(model);
+  }
+
+  @PutMapping("/{id}")
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<CustomerEntityModel> updateCustomer(
+      @PathVariable Long id, @Valid @RequestBody RequestCustomer customer) {
+    CustomerEntity saved = cudCustomerAdapter.updateCustomer(id, customer);
+
+    return ResponseEntity.ok().body(new CustomerEntityModel(saved));
+  }
+
+  @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<CustomerEntityModel> deleteCustomer(@PathVariable Long id) {
+    cudCustomerAdapter.deleteCustomer(id);
+
+    return ResponseEntity.ok().build();
   }
 }

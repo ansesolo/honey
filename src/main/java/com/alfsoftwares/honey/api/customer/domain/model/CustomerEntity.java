@@ -2,17 +2,21 @@ package com.alfsoftwares.honey.api.customer.domain.model;
 
 import com.alfsoftwares.honey.api.core.domain.model.BaseEntity;
 import jakarta.annotation.Nonnull;
+import jakarta.persistence.Entity;
 import java.time.ZonedDateTime;
 
+@Entity
 public class CustomerEntity extends BaseEntity {
 
-  @Nonnull private String firstname;
-  @Nonnull private String lastname;
+  private String firstname;
+  private String lastname;
   private String email;
   private String phone;
   private String street;
   private String postalCode;
   private String city;
+
+  public CustomerEntity() {}
 
   private CustomerEntity(CustomerBuilder builder) {
     this.setId(builder.id);
