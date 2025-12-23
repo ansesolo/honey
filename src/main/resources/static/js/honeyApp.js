@@ -133,7 +133,7 @@ function app() {
                 this.currentView = 'dashboard';
                 this.credentials = { username: '', password: '' };
             } catch (err) {
-                this.error = err.message;
+                this.error = this.formatErrorMessage(err);
             } finally {
                 this.isLoading = false;
             }
@@ -159,6 +159,22 @@ function app() {
             }
         },
 
+        formatErrorMessage(err) {
+            const problem = err.payload;
+            console.log("ALF pb : " + problem);
+
+            if (problem) {
+                if (problem.errors) {
+                    return Object.entries(problem.errors)
+                        .map(([field, message]) => `${field}: ${message}`)
+                        .join(' | ');
+                }
+                return problem.detail || problem.title || "Validation error";
+            }
+
+            return err.message || "Unknown error occurred";
+        },
+
         // === API CALLS ===
         async fetchAPI(endpoint, options = {}) {
             const defaultOptions = {
@@ -176,14 +192,30 @@ function app() {
 
             if (response.status === 403 || response.status === 401) {
                 this.handleLogout();
-                throw new Error('Session expirée, veuillez vous reconnecter');
+                throw new Error('Expired session, please log in again.');
             }
+
+            let data = null;
+            if (response.status !== 204) {
+                const contentType = response.headers.get("content-type");
+                console.log("ALF ct: " + contentType);
+                if (contentType && (contentType.includes("application/json") || contentType.includes("application/problem+json"))) {
+                    data = await response.json();
+                }
+            }
+
+            console.log("ALF st: " + response.status);
+            console.log("ALF ok: " + response.ok);
+            console.log("ALF data: " + data);
 
             if (!response.ok) {
-                throw new Error(`Erreur ${response.status}: ${response.statusText}`);
+                const error = new Error(`Erreur ${response.status}: ${data?.detail || ''}`);
+                error.payload = data;
+                error.status = response.status;
+                throw error;
             }
 
-            return response;
+            return data;
         },
 
         // === CUSTOMERS CRUD ===
@@ -192,17 +224,17 @@ function app() {
             this.error = '';
 
             try {
-                const response = await this.fetchAPI('/api/customers');
-                this.customers = await response.json();
+                this.customers = await this.fetchAPI('/api/customers');
                 this.currentPage = 1; // Reset à la page 1 après chargement
             } catch (err) {
-                this.error = err.message;
+                this.error = this.formatErrorMessage(err);
             } finally {
                 this.isLoading = false;
             }
         },
 
         async saveCustomer() {
+            console.log("ALF0 : save");
             this.isLoading = true;
             this.error = '';
 
@@ -217,11 +249,16 @@ function app() {
                     body: JSON.stringify(this.customerForm)
                 });
 
+                console.log("ALF0 : after await save");
+
                 await this.loadCustomers();
                 this.closeCustomerForm();
             } catch (err) {
-                this.error = err.message;
+                console.log("ALF : catch " + err);
+                console.log("ALF : response data", err.response?.data);
+                this.error = this.formatErrorMessage(err);
             } finally {
+                console.log("ALF0 : finally");
                 this.isLoading = false;
             }
         },
@@ -241,7 +278,7 @@ function app() {
 
                 await this.loadCustomers();
             } catch (err) {
-                this.error = err.message;
+                this.error = this.formatErrorMessage(err);
             } finally {
                 this.isLoading = false;
             }
