@@ -1,26 +1,41 @@
 package com.alfsoftwares.honey.api.customer.domain.model;
 
+import com.alfsoftwares.honey.api.core.domain.converter.LowerConverter;
+import com.alfsoftwares.honey.api.core.domain.converter.PhoneConverter;
+import com.alfsoftwares.honey.api.core.domain.converter.TitleCaseConverter;
+import com.alfsoftwares.honey.api.core.domain.converter.UpperConverter;
 import com.alfsoftwares.honey.api.core.domain.model.BaseEntity;
 import jakarta.annotation.Nonnull;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import java.time.ZonedDateTime;
 
 @Entity
 public class CustomerEntity extends BaseEntity {
 
+  @Convert(converter = TitleCaseConverter.class)
   private String firstname;
+
+  @Convert(converter = UpperConverter.class)
   private String lastname;
+
+  @Convert(converter = LowerConverter.class)
   private String email;
+
+  @Convert(converter = PhoneConverter.class)
   private String phone;
+
+  @Convert(converter = TitleCaseConverter.class)
   private String street;
+
   private String postalCode;
+
+  @Convert(converter = UpperConverter.class)
   private String city;
 
   public CustomerEntity() {}
 
   private CustomerEntity(CustomerBuilder builder) {
     this.setId(builder.id);
-    this.setCreatedAt(ZonedDateTime.now());
     this.firstname = builder.firstname;
     this.lastname = builder.lastname;
     this.email = builder.email;

@@ -3,7 +3,6 @@ package com.alfsoftwares.honey.api.product.domain.model;
 import com.alfsoftwares.honey.api.core.domain.model.NamedEntity;
 import com.alfsoftwares.honey.api.core.domain.model.Unit;
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ public class ProductEntity extends NamedEntity {
 
   private ProductEntity(ProductBuilder builder) {
     this.setId(builder.id);
-    this.setCreatedAt(ZonedDateTime.now());
     this.setName(builder.name);
     this.unit = builder.unit;
     this.defaultPrice = builder.defaultPrice;

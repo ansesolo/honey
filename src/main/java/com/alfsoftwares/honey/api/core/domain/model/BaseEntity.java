@@ -1,23 +1,37 @@
 package com.alfsoftwares.honey.api.core.domain.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import java.time.ZonedDateTime;
+import jakarta.persistence.*;
+import java.time.Instant;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /** Entité de base. On va gérer ici tout ce qui est commun aux entités */
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   private long id;
 
+  @CreatedBy
+  @Column(nullable = false, updatable = false)
   private String createdBy;
-  private ZonedDateTime createdAt;
+
+  @CreatedDate
+  @Column(nullable = false, updatable = false)
+  private Instant createdAt;
+
+  @LastModifiedBy
+  @Column(insertable = false)
   private String modifiedBy;
-  private ZonedDateTime modifiedAt;
+
+  @LastModifiedDate
+  @Column(insertable = false)
+  private Instant modifiedAt;
 
   public long getId() {
     return id;
@@ -35,11 +49,11 @@ public abstract class BaseEntity {
     this.createdBy = createdBy;
   }
 
-  public ZonedDateTime getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(final ZonedDateTime createdAt) {
+  public void setCreatedAt(final Instant createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -51,11 +65,11 @@ public abstract class BaseEntity {
     this.modifiedBy = modifiedBy;
   }
 
-  public ZonedDateTime getModifiedAt() {
+  public Instant getModifiedAt() {
     return modifiedAt;
   }
 
-  public void setModifiedAt(final ZonedDateTime modifiedAt) {
+  public void setModifiedAt(final Instant modifiedAt) {
     this.modifiedAt = modifiedAt;
   }
 }
