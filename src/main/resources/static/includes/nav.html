@@ -1,0 +1,45 @@
+<!-- Navigation -->
+<nav class="bg-gradient-to-r from-honey-500 to-bee-600 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center space-x-8">
+                <!-- Logo mini -->
+                <div class="flex items-center space-x-2">
+                    <img alt="BeeHappy logo" src="images/bee.png" style="max-width:50px">
+                    <h1 class="text-xl font-bold">BeeHappy</h1>
+                </div>
+                <div class="flex space-x-4">
+                    <button
+                            :class="currentView === 'dashboard' ? 'bg-honey-700' : 'hover:bg-honey-600'"
+                            @click="navigateTo('dashboard')"
+                            class="px-4 py-2 rounded transition">
+                        📊 Dashboard
+                    </button>
+                    <button
+                            :class="currentView === 'customers' ? 'bg-honey-700' : 'hover:bg-honey-600'"
+                            @click="navigateTo('customers')"
+                            class="px-4 py-2 rounded transition">
+                        👥 Clients
+                    </button>
+                    <button
+                            :class="currentView === 'products' ? 'bg-honey-700' : 'hover:bg-honey-600'"
+                            @click="navigateTo('products')"
+                            class="px-4 py-2 rounded transition">
+                        🍯 Produits
+                    </button>
+                    <button
+                            :class="currentView === 'stock' ? 'bg-honey-700' : 'hover:bg-honey-600'"
+                            @click="navigateTo('stock')"
+                            class="px-4 py-2 rounded transition">
+                        📦 Stock
+                    </button>
+                </div>
+            </div>
+            <button
+                    @click="handleLogout"
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded transition shadow-md font-medium">
+                🚪 Déconnexion
+            </button>
+        </div>
+    </div>
+</nav>

@@ -69,11 +69,14 @@ public class SecurityConfiguration {
 
     return http.csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
-        .securityMatcher("/api/login/**")
+        .securityMatcher(
+            "/api/login/**", "/includes/**", "/js/**", "/images/**", "/index.html", "/")
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             auth -> {
+              auth.requestMatchers("/", "/index.html", "/includes/**", "/js/**", "/images/**")
+                  .permitAll();
               auth.requestMatchers("/api/login/**").permitAll();
             })
         .httpBasic(Customizer.withDefaults())

@@ -6,6 +6,15 @@ function app() {
         error: '',
         token: localStorage.getItem('authToken') || '',
 
+        templates: {
+            nav: '',
+            dashboard: '',
+            customers: '',
+            products: '',
+            stocks: '',
+            footer: ''
+        },
+
         // Credentials login
         credentials: {
             username: '',
@@ -108,6 +117,30 @@ function app() {
             }
             
             return pages;
+        },
+
+        // Loading html pages
+        async loadTemplates() {
+            try {
+                const [nav, dashboard, customers, products, stocks, footer] = await Promise.all([
+                    fetch('includes/nav.html').then(res => res.text()),
+                    fetch('includes/dashboard.html').then(res => res.text()),
+                    fetch('includes/customers.html').then(res => res.text()),
+                    fetch('includes/products.html').then(res => res.text()),
+                    fetch('includes/stocks.html').then(res => res.text()),
+                    fetch('includes/footer.html').then(res => res.text())
+                ]);
+
+                // On stocke le contenu dans nos variables réactives
+                this.templates.nav = nav;
+                this.templates.dashboard = dashboard;
+                this.templates.customers = customers;
+                this.templates.products = products;
+                this.templates.stocks = stocks;
+                this.templates.footer = footer;
+            } catch (error) {
+                console.error("Erreur lors du chargement des templates:", error);
+            }
         },
 
         // === AUTHENTICATION ===

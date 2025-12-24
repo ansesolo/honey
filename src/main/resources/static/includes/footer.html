@@ -1,0 +1,53 @@
+<!-- Bas de page avec informations techniques -->
+<footer class="bg-honey-100 border-t-2 border-honey-300 py-3 px-4 fixed bottom-0 left-0 right-0">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-sm text-honey-800" x-show="hoveredCustomer || (showCustomerForm && selectedCustomer)">
+            <template x-if="hoveredCustomer">
+                <div>
+                    <span class="font-semibold">ID:</span> <span x-text="hoveredCustomer.id"></span>
+                    <span class="mx-2">•</span>
+                    <span class="font-semibold">Créé par:</span> <span
+                        x-text="hoveredCustomer.createdBy || '-'"></span>
+                    <span class="mx-2">•</span>
+                    <span class="font-semibold">Créé le:</span> <span
+                        x-text="formatDateTime(hoveredCustomer.createdAt)"></span>
+                    <template x-if="hoveredCustomer.modifiedAt">
+                                    <span>
+                                        <span class="mx-2">•</span>
+                                        <span class="font-semibold">Modifié le:</span> <span
+                                            x-text="formatDateTime(hoveredCustomer.modifiedAt)"></span>
+                                        <span class="mx-2">•</span>
+                                        <span class="font-semibold">Par:</span> <span
+                                            x-text="hoveredCustomer.modifiedBy || '-'"></span>
+                                    </span>
+                    </template>
+                </div>
+            </template>
+            <template x-if="!hoveredCustomer && showCustomerForm && selectedCustomer">
+                <div>
+                    <span class="font-semibold">ID:</span> <span x-text="selectedCustomer.id"></span>
+                    <span class="mx-2">•</span>
+                    <span class="font-semibold">Créé par:</span> <span
+                        x-text="selectedCustomer.createdBy || '-'"></span>
+                    <span class="mx-2">•</span>
+                    <span class="font-semibold">Créé le:</span> <span
+                        x-text="formatDateTime(selectedCustomer.createdAt)"></span>
+                    <template x-if="selectedCustomer.modifiedAt">
+                                    <span>
+                                        <span class="mx-2">•</span>
+                                        <span class="font-semibold">Modifié le:</span> <span
+                                            x-text="formatDateTime(selectedCustomer.modifiedAt)"></span>
+                                        <span class="mx-2">•</span>
+                                        <span class="font-semibold">Par:</span> <span
+                                            x-text="selectedCustomer.modifiedBy || '-'"></span>
+                                    </span>
+                    </template>
+                </div>
+            </template>
+        </div>
+        <div class="text-sm text-honey-700 text-center"
+             x-show="!hoveredCustomer && !(showCustomerForm && selectedCustomer)">
+            BeeHappy v1.0 - Gestion Apicole
+        </div>
+    </div>
+</footer>
