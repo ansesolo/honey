@@ -8,8 +8,10 @@ import com.alfsoftwares.honey.api.core.domain.model.BaseEntity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "customer")
 public class CustomerEntity extends BaseEntity {
 
   @Convert(converter = TitleCaseConverter.class)

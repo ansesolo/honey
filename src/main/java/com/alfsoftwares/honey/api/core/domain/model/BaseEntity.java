@@ -2,6 +2,7 @@ package com.alfsoftwares.honey.api.core.domain.model;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.util.UUID;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -16,6 +17,9 @@ public abstract class BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   private long id;
+
+  @Column(unique = true, nullable = false)
+  private UUID publicId = UUID.randomUUID();
 
   @CreatedBy
   @Column(nullable = false, updatable = false)
