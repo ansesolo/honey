@@ -6,6 +6,7 @@ import com.alfsoftwares.honey.api.customer.infrastructure.repository.jpa.Custome
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -19,7 +20,9 @@ public class CustomerRepository implements CustomerGateway {
 
   @Override
   public List<CustomerEntity> findAll() {
-    return jpa.findAll();
+    Sort sort = Sort.by("lastname").ascending().and(Sort.by("firstname").ascending());
+
+    return jpa.findAll(sort);
   }
 
   @Override

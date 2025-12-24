@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,8 @@ public class ApiExceptionHandler {
   @ExceptionHandler({
     InvalidRequestException.class,
     MethodArgumentNotValidException.class,
-    ConstraintViolationException.class
+    ConstraintViolationException.class,
+    DataAccessException.class
   })
   public ResponseEntity<ProblemDetail> handleBadRequest(Exception ex) {
     ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -46,7 +48,8 @@ public class ApiExceptionHandler {
                   Collectors.toMap(
                       v -> v.getPropertyPath().toString(), ConstraintViolation::getMessage)));
     } else {
-      problem.setDetail(ex.getMessage());
+      problem.setDetail("Unexpected error");
+      problem.setProperty("errors", ex.getMessage());
     }
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem);
   }

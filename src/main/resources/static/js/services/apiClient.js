@@ -22,14 +22,16 @@ export async function fetchAPI(endpoint, options = {}, token, onLogout) {
     let data = null;
     if (response.status !== 204) {
         const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
+        if (contentType && (contentType.includes("application/json") || contentType.includes("application/problem+json"))) {
             data = await response.json();
         }
     }
 
     if (!response.ok) {
         const error = new Error(`Erreur ${response.status}`);
+        console.log("ALF data ", data);
         error.payload = data;
+        console.log("ALF error ", error);
         throw error;
     }
 
@@ -38,10 +40,23 @@ export async function fetchAPI(endpoint, options = {}, token, onLogout) {
 
 export function formatErrorMessage(err) {
     const problem = err.payload;
-    if (problem && problem.errors) {
-        return Object.entries(problem.errors)
-            .map(([field, message]) => `${field}: ${message}`)
-            .join(' | ');
+
+    if (!problem) return err.message || "Unexpected error occurred";
+
+    const parts = [];
+
+    if (problem.title) parts.push(problem.title);
+    if (problem.detail) parts.push(problem.detail);
+    if (problem.errors) {
+        if (typeof problem.errors === 'object' && !Array.isArray(problem.errors)) {
+            const formattedFields = Object.entries(problem.errors)
+                .map(([field, message]) => `${field}: ${message}`)
+                .join(' | ');
+            parts.push(formattedFields);
+        } else if (typeof problem.errors === 'string') {
+            parts.push(problem.errors);
+        }
     }
-    return problem?.detail || err.message || "Une erreur inconnue est survenue";
+
+    return parts.join(' - ');
 }

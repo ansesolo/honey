@@ -105,7 +105,7 @@ function app() {
         openCustomerForm() { this.selectedItem = null; this.customerForm = this.getEmptyCustomerForm(); this.showCustomerForm = true; },
         editCustomer(customer) { this.selectedItem = customer; this.customerForm = { ...customer }; this.showCustomerForm = true; },
         viewCustomer(customer) { this.selectedItem = customer; this.showCustomerDetail = true; },
-        closeCustomerForm() { this.showCustomerForm = false; this.selectedItem = null; },
+        closeCustomerForm() { this.showCustomerForm = false; this.selectedItem = null; this.error = ''},
         getEmptyCustomerForm() { return { firstname: '', lastname: '', email: '', phone: '', street: '', postalCode: '', city: '' }; },
 
         get paginatedItems() {
