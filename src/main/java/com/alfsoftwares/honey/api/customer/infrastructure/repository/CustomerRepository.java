@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CustomerRepository implements CustomerGateway {
 
-  CustomerJpaRepository jpa;
+  private final CustomerJpaRepository jpa;
 
   public CustomerRepository(final CustomerJpaRepository jpa) {
     this.jpa = jpa;

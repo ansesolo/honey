@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -110,5 +111,5 @@ public interface StockRestControllerDocumentation {
                     schema = @Schema(implementation = ProblemDetail.class)))
       })
   ResponseEntity<StockEntityModel> getStock(
-      @Parameter(name = "id", description = "The product id", in = ParameterIn.PATH) Long id);
+      @Parameter(name = "uuid", description = "The product uuid", in = ParameterIn.PATH) UUID uuid);
 }

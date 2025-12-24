@@ -11,6 +11,7 @@ import com.alfsoftwares.honey.api.product.domain.port.out.ProductGateway;
 import com.alfsoftwares.honey.api.product.domain.port.out.StockGateway;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,12 +30,12 @@ public class StockMovement implements StockMovementAdapter {
     if (stockMovement.quantity().longValue() < 0) {
       throw new InvalidRequestException("Quantity should be positive number");
     }
-    Optional<ProductEntity> product = productGateway.findById(stockMovement.productId());
+    Optional<ProductEntity> product = productGateway.findByPublicId(stockMovement.productId());
     if (product.isEmpty()) {
       throw new NotFoundException("Unknown product");
     }
     if (stockMovement.type().getSign() < 0) {
-      Optional<StockEntity> stock = stockGateway.getStock(product.get().getUnicity());
+      Optional<StockEntity> stock = stockGateway.getStock(product.get().getPublicId());
       if (stock.isEmpty()
           || stock.get().getQuantity().subtract(stockMovement.quantity()).toBigInteger().longValue()
               < 0) {
@@ -60,10 +61,10 @@ public class StockMovement implements StockMovementAdapter {
   }
 
   @Override
-  public StockEntity getStock(Long id) {
-    Optional<ProductEntity> product = productGateway.findById(id);
+  public StockEntity getStock(UUID uuid) {
+    Optional<ProductEntity> product = productGateway.findByPublicId(uuid);
     if (product.isPresent()) {
-      Optional<StockEntity> stock = stockGateway.getStock(product.get().getUnicity());
+      Optional<StockEntity> stock = stockGateway.getStock(product.get().getPublicId());
       if (stock.isPresent()) {
         return stock.get();
       }

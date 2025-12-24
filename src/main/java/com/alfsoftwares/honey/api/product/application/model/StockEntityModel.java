@@ -12,7 +12,7 @@ public class StockEntityModel extends EntityModel<StockEntity> {
   public StockEntityModel(final StockEntity entity) {
     super(entity);
     add(
-        linkTo(methodOn(StockRestController.class).getStock(entity.getProduct().getId()))
+        linkTo(methodOn(StockRestController.class).getStock(entity.getProduct().getPublicId()))
             .withSelfRel());
     add(linkTo(methodOn(StockRestController.class).getStock()).withRel("allEntities"));
   }

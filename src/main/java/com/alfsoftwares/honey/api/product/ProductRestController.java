@@ -4,6 +4,7 @@ import com.alfsoftwares.honey.api.product.application.model.ProductEntityModel;
 import com.alfsoftwares.honey.api.product.domain.model.ProductEntity;
 import com.alfsoftwares.honey.api.product.domain.port.in.SearchProductAdapter;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,8 +31,8 @@ public class ProductRestController implements ProductRestControllerDocumentation
 
   @GetMapping(path = "/{id}")
   @PreAuthorize("hasRole('USER')")
-  public ResponseEntity<ProductEntityModel> getProduct(@PathVariable Long id) {
-    ProductEntity product = searchProductAdapter.getProduct(id);
+  public ResponseEntity<ProductEntityModel> getProduct(@PathVariable UUID uuid) {
+    ProductEntity product = searchProductAdapter.getProduct(uuid);
 
     return ResponseEntity.ok().body(new ProductEntityModel(product));
   }

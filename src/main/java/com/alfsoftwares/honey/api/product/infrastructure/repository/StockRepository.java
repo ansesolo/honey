@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class StockRepository implements StockGateway {
 
-  private final Map<String, StockEntity> stockMovements = new HashMap<>();
+  private final Map<UUID, StockEntity> stockMovements = new HashMap<>();
 
   @Override
   public void save(final StockMovementEntity stockMovement) {
-    String key = stockMovement.getProduct().getUnicity();
+    UUID key = stockMovement.getProduct().getPublicId();
     BigDecimal quantity =
         stockMovement.getQuantity().multiply(new BigDecimal(stockMovement.getType().getSign()));
     StockEntity internal = stockMovements.get(key);
@@ -34,7 +34,7 @@ public class StockRepository implements StockGateway {
   }
 
   @Override
-  public Optional<StockEntity> getStock(String unicity) {
+  public Optional<StockEntity> getStock(UUID unicity) {
     return Optional.ofNullable(stockMovements.get(unicity));
   }
 }

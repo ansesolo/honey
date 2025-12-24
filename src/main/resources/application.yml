@@ -13,7 +13,9 @@ spring:
     show-sql: true
   flyway:
     enabled: true
-    locations: classpath:db/migrations/${spring.datasource.platform}/customer
+    locations:
+      - "classpath:db/migrations/${spring.datasource.platform}/customer"
+      - "classpath:db/migrations/${spring.datasource.platform}/product"
 
 server:
   port: 8042

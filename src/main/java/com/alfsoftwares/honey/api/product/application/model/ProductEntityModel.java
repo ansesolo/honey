@@ -11,7 +11,9 @@ public class ProductEntityModel extends EntityModel<ProductEntity> {
 
   public ProductEntityModel(final ProductEntity entity) {
     super(entity);
-    add(linkTo(methodOn(ProductRestController.class).getProduct(entity.getId())).withSelfRel());
+    add(
+        linkTo(methodOn(ProductRestController.class).getProduct(entity.getPublicId()))
+            .withSelfRel());
     add(linkTo(methodOn(ProductRestController.class).getProducts()).withRel("allEntities"));
   }
 }

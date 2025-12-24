@@ -6,6 +6,7 @@ import com.alfsoftwares.honey.api.product.domain.model.ProductEntity;
 import com.alfsoftwares.honey.api.product.domain.model.StockEntity;
 import com.alfsoftwares.honey.api.product.domain.port.in.StockMovementAdapter;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,8 +41,8 @@ public class StockRestController implements StockRestControllerDocumentation {
 
   @GetMapping(path = "/{id}/stock")
   @PreAuthorize("hasRole('USER')")
-  public ResponseEntity<StockEntityModel> getStock(@PathVariable Long id) {
-    StockEntity stock = stockMovementAdapter.getStock(id);
+  public ResponseEntity<StockEntityModel> getStock(@PathVariable UUID uuid) {
+    StockEntity stock = stockMovementAdapter.getStock(uuid);
 
     return ResponseEntity.ok().body(new StockEntityModel(stock));
   }

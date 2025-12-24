@@ -1,17 +1,27 @@
 package com.alfsoftwares.honey.api.product.domain.model;
 
+import com.alfsoftwares.honey.api.core.domain.converter.JsonMapConverter;
 import com.alfsoftwares.honey.api.core.domain.model.NamedEntity;
 import com.alfsoftwares.honey.api.core.domain.model.Unit;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+@Entity
+@Table(name = "product")
 public class ProductEntity extends NamedEntity {
 
+  @Enumerated(EnumType.STRING)
   private Unit unit;
+
   private BigDecimal defaultPrice;
-  private String unicity;
+
+  @Enumerated(EnumType.STRING)
   private ProductCategory category;
+
+  @Convert(converter = JsonMapConverter.class)
+  @Column(name = "attributes_json", columnDefinition = "json")
   private Map<ProductAttributes, Object> attributes;
 
   public ProductEntity() {}
@@ -21,7 +31,6 @@ public class ProductEntity extends NamedEntity {
     this.setName(builder.name);
     this.unit = builder.unit;
     this.defaultPrice = builder.defaultPrice;
-    this.unicity = builder.unicity;
     this.category = builder.category;
     this.attributes = builder.attributes;
   }
@@ -40,14 +49,6 @@ public class ProductEntity extends NamedEntity {
 
   public void setDefaultPrice(final BigDecimal defaultPrice) {
     this.defaultPrice = defaultPrice;
-  }
-
-  public String getUnicity() {
-    return unicity;
-  }
-
-  public void setUnicity(final String unicity) {
-    this.unicity = unicity;
   }
 
   public ProductCategory getCategory() {
@@ -72,7 +73,6 @@ public class ProductEntity extends NamedEntity {
     private final String name;
     private Unit unit = Unit.UNIT;
     private BigDecimal defaultPrice = BigDecimal.valueOf(0L);
-    private String unicity;
     private ProductCategory category;
     private Map<ProductAttributes, Object> attributes = new HashMap<>();
 
@@ -88,11 +88,6 @@ public class ProductEntity extends NamedEntity {
 
     public ProductBuilder withPrice(BigDecimal defaultPrice) {
       this.defaultPrice = defaultPrice;
-      return this;
-    }
-
-    public ProductBuilder withUnicity(String unicity) {
-      this.unicity = unicity;
       return this;
     }
 
