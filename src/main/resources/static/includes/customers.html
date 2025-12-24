@@ -48,7 +48,7 @@
             </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-            <template :key="customer.id" x-for="customer in paginatedItems">
+            <template :key="customer.publicId" x-for="customer in paginatedItems">
                 <tr @mouseenter="hoveredItem = customer" @mouseleave="hoveredItem = null"
                     class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
@@ -73,7 +73,7 @@
                             ✏️ Éditer
                         </button>
                         <button
-                                @click="deleteCustomer(customer.id)"
+                                @click="deleteCustomer(customer.publicId)"
                                 class="text-red-600 hover:text-red-800 font-medium">
                             🗑️ Supprimer
                         </button>
@@ -86,16 +86,16 @@
 
     <!-- Pagination -->
     <div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sticky bottom-0"
-         x-show="customers.length > 0">
+         x-show="items.length > 0">
         <!-- Info -->
         <div class="text-sm text-gray-700">
             Affichage de
             <span class="font-medium" x-text="((currentPage - 1) * itemsPerPage) + 1"></span>
             à
             <span class="font-medium"
-                  x-text="Math.min(currentPage * itemsPerPage, customers.length)"></span>
+                  x-text="Math.min(currentPage * itemsPerPage, items.length)"></span>
             sur
-            <span class="font-medium" x-text="customers.length"></span>
+            <span class="font-medium" x-text="items.length"></span>
             clients
         </div>
 
@@ -138,7 +138,7 @@
     </div>
 
     <!-- Message si aucun client -->
-    <div class="text-center py-8 text-gray-500" x-show="customers.length === 0">
+    <div class="text-center py-8 text-gray-500" x-show="items.length === 0">
         Aucun client enregistré
     </div>
 </div>
@@ -147,7 +147,7 @@
 <div class="bg-white rounded-lg shadow-xl p-6 border-2 border-honey-200" x-show="showCustomerForm">
     <div class="flex justify-between items-center mb-6">
         <h3 class="text-xl font-bold text-honey-800"
-            x-text="selectedItem?.id ? '✏️ Modifier le client' : '➕ Nouveau client'"></h3>
+            x-text="selectedItem?.publicId ? '✏️ Modifier le client' : '➕ Nouveau client'"></h3>
         <button
                 @click="closeCustomerForm()"
                 class="text-gray-500 hover:text-gray-700">

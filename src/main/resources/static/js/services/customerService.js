@@ -5,8 +5,8 @@ export const customerService = {
         return fetchAPI('/api/customers', {}, token, logoutCb);
     },
     async save(customer, token, logoutCb) {
-        const method = customer.id ? 'PUT' : 'POST';
-        const endpoint = customer.id ? `/api/customers/${customer.id}` : '/api/customers';
+        const method = customer.publicId ? 'PUT' : 'POST';
+        const endpoint = customer.publicId ? `/api/customers/${customer.publicId}` : '/api/customers';
         return fetchAPI(endpoint, {
             method: method,
             body: JSON.stringify(customer)

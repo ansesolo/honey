@@ -34,7 +34,9 @@ public class ApiExceptionHandler {
       problem.setProperty(
           "errors",
           manve.getBindingResult().getFieldErrors().stream()
-              .collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage)));
+              .collect(
+                  Collectors.toMap(
+                      FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage)));
     } else if (ex instanceof ConstraintViolationException cve) {
       problem.setDetail("Constraint violation");
       problem.setProperty(

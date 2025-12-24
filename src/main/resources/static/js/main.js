@@ -3,7 +3,7 @@ import { authService } from './services/authService.js';
 import { customerService } from './services/customerService.js';
 import { formatErrorMessage } from './services/apiClient.js';
 
-window.app = function() {
+function app() {
     return {
         currentView: 'login',
         isLoading: false,
@@ -125,3 +125,5 @@ window.app = function() {
         }
     };
 }
+
+window.app = app;

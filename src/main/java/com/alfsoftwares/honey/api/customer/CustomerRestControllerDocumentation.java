@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,7 +80,8 @@ public interface CustomerRestControllerDocumentation {
                     schema = @Schema(implementation = ProblemDetail.class)))
       })
   ResponseEntity<CustomerEntityModel> getCustomer(
-      @Parameter(name = "id", description = "The customer id", in = ParameterIn.PATH) Long id);
+      @Parameter(name = "uuid", description = "The customer uuid", in = ParameterIn.PATH)
+          UUID uuid);
 
   @Operation(
       summary = "Create a customer",
@@ -147,7 +149,7 @@ public interface CustomerRestControllerDocumentation {
                     schema = @Schema(implementation = Void.class))),
       })
   ResponseEntity<CustomerEntityModel> updateCustomer(
-      @Parameter(name = "id", description = "The customer id", in = ParameterIn.PATH) Long id,
+      @Parameter(name = "uuid", description = "The customer uuid", in = ParameterIn.PATH) UUID uuid,
       @RequestBody RequestCustomer customer);
 
   @Operation(
@@ -178,5 +180,7 @@ public interface CustomerRestControllerDocumentation {
                     mediaType = "application/json",
                     schema = @Schema(implementation = ProblemDetail.class))),
       })
-  ResponseEntity<CustomerEntityModel> deleteCustomer(Long id);
+  ResponseEntity<CustomerEntityModel> deleteCustomer(
+      @Parameter(name = "uuid", description = "The customer uuid", in = ParameterIn.PATH)
+          UUID uuid);
 }

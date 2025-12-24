@@ -3,6 +3,7 @@ package com.alfsoftwares.honey.api.customer.domain.model;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 public record RequestCustomer(
     @NotBlank(message = "Firstname mandatory") String firstname,
@@ -16,18 +17,19 @@ public record RequestCustomer(
     @Pattern(regexp = "^$|\\d{5}", message = "Postal code must contains 5 digits")
         String postalCode,
     String city) {
-  public CustomerEntity toEntity(Long id) {
+  public CustomerEntity toEntity(CustomerEntity dbEntity) {
     CustomerEntity entity = new CustomerEntity();
-    if (id != null) {
-      entity.setId(id);
+    if (dbEntity != null) {
+      entity.setId(dbEntity.getId());
+      entity.setPublicId(dbEntity.getPublicId());
     }
     entity.setFirstname(firstname);
     entity.setLastname(lastname);
-    entity.setEmail(email);
-    entity.setPhone(phone);
-    entity.setStreet(street);
-    entity.setPostalCode(postalCode);
-    entity.setCity(city);
+    entity.setEmail(StringUtils.isBlank(email) ? null : email);
+    entity.setPhone(StringUtils.isBlank(phone) ? null : phone);
+    entity.setStreet(StringUtils.isBlank(street) ? null : phone);
+    entity.setPostalCode(StringUtils.isBlank(postalCode) ? null : postalCode);
+    entity.setCity(StringUtils.isBlank(city) ? null : city);
 
     return entity;
   }

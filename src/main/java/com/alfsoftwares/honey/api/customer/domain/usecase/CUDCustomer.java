@@ -5,6 +5,7 @@ import com.alfsoftwares.honey.api.customer.domain.model.CustomerEntity;
 import com.alfsoftwares.honey.api.customer.domain.model.RequestCustomer;
 import com.alfsoftwares.honey.api.customer.domain.port.in.CUDCustomerAdapter;
 import com.alfsoftwares.honey.api.customer.domain.port.out.CustomerGateway;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,16 +23,18 @@ public class CUDCustomer implements CUDCustomerAdapter {
   }
 
   @Override
-  public CustomerEntity updateCustomer(long id, final RequestCustomer customer) {
-    gateway.findById(id).orElseThrow(() -> new NotFoundException("Customer not found"));
+  public CustomerEntity updateCustomer(UUID uuid, final RequestCustomer customer) {
+    CustomerEntity entity =
+        gateway.findByPublicId(uuid).orElseThrow(() -> new NotFoundException("Customer not found"));
 
-    return gateway.save(customer.toEntity(id));
+    return gateway.save(customer.toEntity(entity));
   }
 
   @Override
-  public void deleteCustomer(final Long id) {
-    gateway.findById(id).orElseThrow(() -> new NotFoundException("Customer not found"));
+  public void deleteCustomer(final UUID uuid) {
+    CustomerEntity entity =
+        gateway.findByPublicId(uuid).orElseThrow(() -> new NotFoundException("Customer not found"));
 
-    gateway.deleteById(id);
+    gateway.deleteById(entity.getId());
   }
 }

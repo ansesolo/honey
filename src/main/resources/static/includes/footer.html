@@ -4,7 +4,7 @@
         <div class="text-sm text-honey-800" x-show="hoveredItem || (showCustomerForm && selectedItem)">
             <template x-if="hoveredItem">
                 <div>
-                    <span class="font-semibold">ID:</span> <span x-text="hoveredItem.id"></span>
+                    <span class="font-semibold">ID:</span> <span x-text="hoveredItem.publicId"></span>
                     <span class="mx-2">•</span>
                     <span class="font-semibold">Créé par:</span> <span
                         x-text="hoveredItem.createdBy || '-'"></span>
@@ -25,7 +25,7 @@
             </template>
             <template x-if="!hoveredItem && showCustomerForm && selectedItem">
                 <div>
-                    <span class="font-semibold">ID:</span> <span x-text="selectedItem.id"></span>
+                    <span class="font-semibold">ID:</span> <span x-text="selectedItem.publicId"></span>
                     <span class="mx-2">•</span>
                     <span class="font-semibold">Créé par:</span> <span
                         x-text="selectedItem.createdBy || '-'"></span>

@@ -6,6 +6,7 @@ import com.alfsoftwares.honey.api.core.domain.converter.TitleCaseConverter;
 import com.alfsoftwares.honey.api.core.domain.converter.UpperConverter;
 import com.alfsoftwares.honey.api.core.domain.model.BaseEntity;
 import jakarta.annotation.Nonnull;
+import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -21,6 +22,7 @@ public class CustomerEntity extends BaseEntity {
   private String lastname;
 
   @Convert(converter = LowerConverter.class)
+  @Column(unique = true)
   private String email;
 
   @Convert(converter = PhoneConverter.class)
@@ -35,17 +37,6 @@ public class CustomerEntity extends BaseEntity {
   private String city;
 
   public CustomerEntity() {}
-
-  private CustomerEntity(CustomerBuilder builder) {
-    this.setId(builder.id);
-    this.firstname = builder.firstname;
-    this.lastname = builder.lastname;
-    this.email = builder.email;
-    this.phone = builder.phone;
-    this.street = builder.street;
-    this.postalCode = builder.postalCode;
-    this.city = builder.city;
-  }
 
   @Nonnull
   public String getFirstname() {
@@ -103,48 +94,5 @@ public class CustomerEntity extends BaseEntity {
 
   public void setCity(final String city) {
     this.city = city;
-  }
-
-  public static class CustomerBuilder {
-
-    private final long id;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String phone;
-    private String street;
-    private String postalCode;
-    private String city;
-
-    public CustomerBuilder(long id) {
-      this.id = id;
-    }
-
-    public CustomerBuilder withIdentity(String firstname, String lastname) {
-      this.firstname = firstname;
-      this.lastname = lastname;
-      return this;
-    }
-
-    public CustomerBuilder withEmail(String email) {
-      this.email = email;
-      return this;
-    }
-
-    public CustomerBuilder withPhone(String phone) {
-      this.phone = phone;
-      return this;
-    }
-
-    public CustomerBuilder withAddress(String street, String postalCode, String city) {
-      this.street = street;
-      this.postalCode = postalCode;
-      this.city = city;
-      return this;
-    }
-
-    public CustomerEntity build() {
-      return new CustomerEntity(this);
-    }
   }
 }

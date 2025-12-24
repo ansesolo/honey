@@ -1,5 +1,6 @@
 package com.alfsoftwares.honey.api.customer;
 
+import com.alfsoftwares.honey.api.customer.application.dto.CustomerDto;
 import com.alfsoftwares.honey.api.customer.application.model.CustomerEntityModel;
 import com.alfsoftwares.honey.api.customer.domain.model.CustomerEntity;
 import com.alfsoftwares.honey.api.customer.domain.model.RequestCustomer;
@@ -7,6 +8,7 @@ import com.alfsoftwares.honey.api.customer.domain.port.in.CUDCustomerAdapter;
 import com.alfsoftwares.honey.api.customer.domain.port.in.SearchCustomerAdapter;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,17 +32,21 @@ public class CustomerRestController implements CustomerRestControllerDocumentati
   @GetMapping
   @PreAuthorize("hasRole('USER')")
   public ResponseEntity<List<CustomerEntityModel>> getCustomers() {
-    List<CustomerEntity> products = searchCustomerAdapter.getAllCustomers();
+    List<CustomerEntity> customers = searchCustomerAdapter.getAllCustomers();
 
-    return ResponseEntity.ok().body(products.stream().map(CustomerEntityModel::new).toList());
+    return ResponseEntity.ok()
+        .body(
+            customers.stream()
+                .map(c -> new CustomerEntityModel(CustomerDto.fromEntity(c)))
+                .toList());
   }
 
-  @GetMapping(path = "/{id}")
+  @GetMapping(path = "/{uuid}")
   @PreAuthorize("hasRole('USER')")
-  public ResponseEntity<CustomerEntityModel> getCustomer(@PathVariable Long id) {
-    CustomerEntity customer = searchCustomerAdapter.getCustomer(id);
+  public ResponseEntity<CustomerEntityModel> getCustomer(@PathVariable UUID uuid) {
+    CustomerEntity customer = searchCustomerAdapter.getCustomer(uuid);
 
-    return ResponseEntity.ok().body(new CustomerEntityModel(customer));
+    return ResponseEntity.ok().body(new CustomerEntityModel(CustomerDto.fromEntity(customer)));
   }
 
   @PostMapping()
@@ -49,24 +55,24 @@ public class CustomerRestController implements CustomerRestControllerDocumentati
       @Valid @RequestBody RequestCustomer customer) {
     CustomerEntity saved = cudCustomerAdapter.createCustomer(customer);
 
-    CustomerEntityModel model = new CustomerEntityModel(saved);
+    CustomerEntityModel model = new CustomerEntityModel(CustomerDto.fromEntity(saved));
 
     return ResponseEntity.created(model.getRequiredLink("self").toUri()).body(model);
   }
 
-  @PutMapping("/{id}")
+  @PutMapping("/{uuid}")
   @PreAuthorize("hasRole('USER')")
   public ResponseEntity<CustomerEntityModel> updateCustomer(
-      @PathVariable Long id, @Valid @RequestBody RequestCustomer customer) {
-    CustomerEntity saved = cudCustomerAdapter.updateCustomer(id, customer);
+      @PathVariable UUID uuid, @Valid @RequestBody RequestCustomer customer) {
+    CustomerEntity saved = cudCustomerAdapter.updateCustomer(uuid, customer);
 
-    return ResponseEntity.ok().body(new CustomerEntityModel(saved));
+    return ResponseEntity.ok().body(new CustomerEntityModel(CustomerDto.fromEntity(saved)));
   }
 
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/{uuid}")
   @PreAuthorize("hasRole('USER')")
-  public ResponseEntity<CustomerEntityModel> deleteCustomer(@PathVariable Long id) {
-    cudCustomerAdapter.deleteCustomer(id);
+  public ResponseEntity<CustomerEntityModel> deleteCustomer(@PathVariable UUID uuid) {
+    cudCustomerAdapter.deleteCustomer(uuid);
 
     return ResponseEntity.ok().build();
   }

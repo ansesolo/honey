@@ -45,6 +45,14 @@ public abstract class BaseEntity {
     this.id = id;
   }
 
+  public UUID getPublicId() {
+    return publicId;
+  }
+
+  public void setPublicId(final UUID publicId) {
+    this.publicId = publicId;
+  }
+
   public String getCreatedBy() {
     return createdBy;
   }

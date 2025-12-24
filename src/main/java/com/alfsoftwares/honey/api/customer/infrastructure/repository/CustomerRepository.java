@@ -5,6 +5,7 @@ import com.alfsoftwares.honey.api.customer.domain.port.out.CustomerGateway;
 import com.alfsoftwares.honey.api.customer.infrastructure.repository.jpa.CustomerJpaRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,8 +23,8 @@ public class CustomerRepository implements CustomerGateway {
   }
 
   @Override
-  public Optional<CustomerEntity> findById(final Long id) {
-    return jpa.findById(id);
+  public Optional<CustomerEntity> findByPublicId(final UUID uuid) {
+    return jpa.findByPublicId(uuid);
   }
 
   @Override
