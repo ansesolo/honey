@@ -1,52 +1,52 @@
 <!-- Bas de page avec informations techniques -->
 <footer class="bg-honey-100 border-t-2 border-honey-300 py-3 px-4 fixed bottom-0 left-0 right-0">
     <div class="max-w-7xl mx-auto">
-        <div class="text-sm text-honey-800" x-show="hoveredCustomer || (showCustomerForm && selectedCustomer)">
-            <template x-if="hoveredCustomer">
+        <div class="text-sm text-honey-800" x-show="hoveredItem || (showCustomerForm && selectedItem)">
+            <template x-if="hoveredItem">
                 <div>
-                    <span class="font-semibold">ID:</span> <span x-text="hoveredCustomer.id"></span>
+                    <span class="font-semibold">ID:</span> <span x-text="hoveredItem.id"></span>
                     <span class="mx-2">•</span>
                     <span class="font-semibold">Créé par:</span> <span
-                        x-text="hoveredCustomer.createdBy || '-'"></span>
+                        x-text="hoveredItem.createdBy || '-'"></span>
                     <span class="mx-2">•</span>
                     <span class="font-semibold">Créé le:</span> <span
-                        x-text="formatDateTime(hoveredCustomer.createdAt)"></span>
-                    <template x-if="hoveredCustomer.modifiedAt">
+                        x-text="formatDateTime(hoveredItem.createdAt)"></span>
+                    <template x-if="hoveredItem.modifiedAt">
                                     <span>
                                         <span class="mx-2">•</span>
                                         <span class="font-semibold">Modifié le:</span> <span
-                                            x-text="formatDateTime(hoveredCustomer.modifiedAt)"></span>
+                                            x-text="formatDateTime(hoveredItem.modifiedAt)"></span>
                                         <span class="mx-2">•</span>
                                         <span class="font-semibold">Par:</span> <span
-                                            x-text="hoveredCustomer.modifiedBy || '-'"></span>
+                                            x-text="hoveredItem.modifiedBy || '-'"></span>
                                     </span>
                     </template>
                 </div>
             </template>
-            <template x-if="!hoveredCustomer && showCustomerForm && selectedCustomer">
+            <template x-if="!hoveredItem && showCustomerForm && selectedItem">
                 <div>
-                    <span class="font-semibold">ID:</span> <span x-text="selectedCustomer.id"></span>
+                    <span class="font-semibold">ID:</span> <span x-text="selectedItem.id"></span>
                     <span class="mx-2">•</span>
                     <span class="font-semibold">Créé par:</span> <span
-                        x-text="selectedCustomer.createdBy || '-'"></span>
+                        x-text="selectedItem.createdBy || '-'"></span>
                     <span class="mx-2">•</span>
                     <span class="font-semibold">Créé le:</span> <span
-                        x-text="formatDateTime(selectedCustomer.createdAt)"></span>
-                    <template x-if="selectedCustomer.modifiedAt">
+                        x-text="formatDateTime(selectedItem.createdAt)"></span>
+                    <template x-if="selectedItem.modifiedAt">
                                     <span>
                                         <span class="mx-2">•</span>
                                         <span class="font-semibold">Modifié le:</span> <span
-                                            x-text="formatDateTime(selectedCustomer.modifiedAt)"></span>
+                                            x-text="formatDateTime(selectedItem.modifiedAt)"></span>
                                         <span class="mx-2">•</span>
                                         <span class="font-semibold">Par:</span> <span
-                                            x-text="selectedCustomer.modifiedBy || '-'"></span>
+                                            x-text="selectedItem.modifiedBy || '-'"></span>
                                     </span>
                     </template>
                 </div>
             </template>
         </div>
         <div class="text-sm text-honey-700 text-center"
-             x-show="!hoveredCustomer && !(showCustomerForm && selectedCustomer)">
+             x-show="!hoveredItem && !(showCustomerForm && selectedItem)">
             BeeHappy v1.0 - Gestion Apicole
         </div>
     </div>

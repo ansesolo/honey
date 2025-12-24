@@ -24,7 +24,7 @@ function app() {
         // Données clients
         customers: [],
         selectedCustomer: null,
-        hoveredCustomer: null,
+        hoveredItem: null,
         showCustomerForm: false,
         showCustomerDetail: false,
         customerForm: {

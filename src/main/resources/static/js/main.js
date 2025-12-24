@@ -11,9 +11,9 @@ window.app = function() {
         token: localStorage.getItem('authToken') || '',
         templates: { nav: '', dashboard: '', customers: '', products: '', stocks: '', footer: '' },
         credentials: { username: '', password: '' },
-        customers: [],
-        selectedCustomer: null,
-        hoveredCustomer: null,
+        items: [],
+        selectedItem: null,
+        hoveredItem: null,
         showCustomerForm: false,
         showCustomerDetail: false,
         customerForm: { firstname: '', lastname: '', email: '', phone: '', street: '', postalCode: '', city: '' },
@@ -59,7 +59,7 @@ window.app = function() {
             this.token = '';
             localStorage.removeItem('authToken');
             this.currentView = 'login';
-            this.customers = [];
+            this.items = [];
         },
 
         async navigateTo(view) {
@@ -70,7 +70,7 @@ window.app = function() {
         async loadCustomers() {
             this.isLoading = true;
             try {
-                this.customers = await customerService.getAll(this.token, () => this.handleLogout());
+                this.items = await customerService.getAll(this.token, () => this.handleLogout());
                 this.currentPage = 1;
             } catch (err) {
                 this.error = formatErrorMessage(err);
@@ -102,17 +102,17 @@ window.app = function() {
             }
         },
 
-        openCustomerForm() { this.selectedCustomer = null; this.customerForm = this.getEmptyCustomerForm(); this.showCustomerForm = true; },
-        editCustomer(customer) { this.selectedCustomer = customer; this.customerForm = { ...customer }; this.showCustomerForm = true; },
-        viewCustomer(customer) { this.selectedCustomer = customer; this.showCustomerDetail = true; },
-        closeCustomerForm() { this.showCustomerForm = false; this.selectedCustomer = null; },
+        openCustomerForm() { this.selectedItem = null; this.customerForm = this.getEmptyCustomerForm(); this.showCustomerForm = true; },
+        editCustomer(customer) { this.selectedItem = customer; this.customerForm = { ...customer }; this.showCustomerForm = true; },
+        viewCustomer(customer) { this.selectedItem = customer; this.showCustomerDetail = true; },
+        closeCustomerForm() { this.showCustomerForm = false; this.selectedItem = null; },
         getEmptyCustomerForm() { return { firstname: '', lastname: '', email: '', phone: '', street: '', postalCode: '', city: '' }; },
 
-        get paginatedCustomers() {
+        get paginatedItems() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
-            return this.customers.slice(start, start + this.itemsPerPage);
+            return this.items.slice(start, start + this.itemsPerPage);
         },
-        get totalPages() { return Math.ceil(this.customers.length / this.itemsPerPage); },
+        get totalPages() { return Math.ceil(this.items.length / this.itemsPerPage); },
         get hasNextPage() { return this.currentPage < this.totalPages; },
         get hasPreviousPage() { return this.currentPage > 1; },
         nextPage() { if (this.hasNextPage) this.currentPage++; },
