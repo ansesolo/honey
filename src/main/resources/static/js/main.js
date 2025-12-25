@@ -9,7 +9,7 @@ function app() {
         isLoading: false,
         error: '',
         token: localStorage.getItem('authToken') || '',
-        templates: { nav: '', dashboard: '', customers: '', products: '', stocks: '', footer: '' },
+        templates: { nav: '', dashboard: '', customers: '', customersForm: '', customersModal: '', customersArray: '', products: '', stocks: '', footer: '', pagination: ''},
         credentials: { username: '', password: '' },
         items: [],
         selectedItem: null,
@@ -31,7 +31,7 @@ function app() {
 
         async loadTemplates() {
             try {
-                const paths = ['nav', 'dashboard', 'customers', 'products', 'stocks', 'footer'];
+                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'stocks', 'footer', 'pagination'];
                 const contents = await Promise.all(paths.map(p => fetch(`includes/${p}.html`).then(r => r.text())));
                 paths.forEach((p, i) => this.templates[p] = contents[i]);
             } catch (error) {

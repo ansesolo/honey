@@ -1,0 +1,45 @@
+<!-- Modal de détail client -->
+<div @click.self="showCustomerDetail = false"
+     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+     x-show="showCustomerDetail">
+    <div class="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 border-4 border-honey-400">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-honey-800">👤 Détails du client</h3>
+            <button
+                    @click="showCustomerDetail = false"
+                    class="text-gray-500 hover:text-gray-700 text-2xl">
+                ✕
+            </button>
+        </div>
+
+        <template x-if="selectedItem">
+            <div class="space-y-3">
+                <div>
+                    <span class="text-sm text-gray-500">Nom complet:</span>
+                    <p class="font-medium text-lg"
+                       x-text="`${selectedItem.firstname} ${selectedItem.lastname}`"></p>
+                </div>
+                <div>
+                    <span class="text-sm text-gray-500">Email:</span>
+                    <p class="font-medium" x-text="selectedItem.email || '-'"></p>
+                </div>
+                <div>
+                    <span class="text-sm text-gray-500">Téléphone:</span>
+                    <p class="font-medium" x-text="selectedItem.phone || '-'"></p>
+                </div>
+                <div>
+                    <span class="text-sm text-gray-500">Adresse:</span>
+                    <p class="font-medium" x-text="formatAddress(selectedItem)"></p>
+                </div>
+            </div>
+        </template>
+
+        <div class="mt-6 flex justify-end">
+            <button
+                    @click="showCustomerDetail = false"
+                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                Fermer
+            </button>
+        </div>
+    </div>
+</div>

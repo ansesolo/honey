@@ -1,0 +1,52 @@
+<!-- Pagination -->
+<div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sticky bottom-0"
+     x-show="items.length > 0">
+    <!-- Info -->
+    <div class="text-sm text-gray-700">
+        Affichage de
+        <span class="font-medium" x-text="((currentPage - 1) * itemsPerPage) + 1"></span>
+        à
+        <span class="font-medium"
+              x-text="Math.min(currentPage * itemsPerPage, items.length)"></span>
+        sur
+        <span class="font-medium" x-text="items.length"></span>
+        clients
+    </div>
+
+    <!-- Boutons -->
+    <div class="flex items-center space-x-2">
+        <!-- Précédent -->
+        <button
+                :class="hasPreviousPage ? 'text-honey-600 hover:bg-honey-50' : 'text-gray-300 cursor-not-allowed'"
+                :disabled="!hasPreviousPage"
+                @click="previousPage()"
+                class="px-3 py-1 rounded border border-gray-300 text-sm font-medium transition">
+            ← Précédent
+        </button>
+
+        <!-- Numéros de page -->
+        <template :key="page" x-for="page in pageNumbers">
+            <button
+                    :class="currentPage === page ? 'bg-honey-500 text-white border-honey-500' : 'text-gray-700 hover:bg-gray-50 border-gray-300'"
+                    @click="goToPage(page)"
+                    class="px-3 py-1 rounded border text-sm font-medium transition"
+                    x-show="page !== '...'"
+                    x-text="page">
+            </button>
+            <span
+                    class="px-2 text-gray-500"
+                    x-show="page === '...'">
+                                        ...
+                </span>
+        </template>
+
+        <!-- Suivant -->
+        <button
+                :class="hasNextPage ? 'text-honey-600 hover:bg-honey-50' : 'text-gray-300 cursor-not-allowed'"
+                :disabled="!hasNextPage"
+                @click="nextPage()"
+                class="px-3 py-1 rounded border border-gray-300 text-sm font-medium transition">
+            Suivant →
+        </button>
+    </div>
+</div>
