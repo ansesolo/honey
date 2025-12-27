@@ -10,7 +10,11 @@ return {
         isLoading: false,
         error: '',
         token: localStorage.getItem('authToken') || '',
-        templates: { nav: '', dashboard: '', customers: '', customersForm: '', customersModal: '', customersArray: '', products: '', productsArray: '', stocks: '', footer: '', pagination: ''},
+        templates: { nav: '', dashboard: '',
+                    customers: '', customersArray: '', customersModal: '', customersForm: '',
+                    products: '', productsArray: '', productsModal: '',
+                    stocks: '',
+                    footer: '', pagination: ''},
         credentials: { username: '', password: '' },
         items: [],
         selectedItem: null,
@@ -23,7 +27,7 @@ return {
         showProductDetail: false,
         productForm: { name: '', unit: '', defaultPrice: '', category: '', attributes: ''},
         currentPage: 1,
-        itemsPerPage: 3,
+        itemsPerPage: 10,
 
         ...formatters,
 
@@ -57,7 +61,7 @@ return {
 
         async loadTemplates() {
             try {
-                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'productsArray', 'stocks', 'footer', 'pagination'];
+                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'productsArray', 'productsModal', 'stocks', 'footer', 'pagination'];
                 const contents = await Promise.all(paths.map(p => fetch(`includes/${p}.html`).then(r => r.text())));
                 paths.forEach((p, i) => this.templates[p] = contents[i]);
             } catch (error) {

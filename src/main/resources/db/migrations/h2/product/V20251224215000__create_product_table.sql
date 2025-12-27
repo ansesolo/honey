@@ -13,12 +13,18 @@ CREATE TABLE product
     modified_by     VARCHAR(255)
 );
 
-INSERT INTO product (name, unit, category, attributes_json)
-VALUES ('Pot Vide 1KG', 'UNIT', 'EMPTY_JAR', '{"SIZE": "1KG"}');
-INSERT INTO product (name, unit, category, attributes_json)
-VALUES ('Pot Vide 500G', 'UNIT', 'EMPTY_JAR', '{"SIZE": "500G"}');
+INSERT INTO product (name, unit, category)
+VALUES ('Pot Vide 1KG', 'UNIT', 'EMPTY_JAR');
+INSERT INTO product (name, unit, category, default_price, attributes_json)
+VALUES ('Pot 1KG', 'UNIT', 'FULL_JAR', 13.0, '{"WEIGHT": "1000"}');
+INSERT INTO product (name, unit, category)
+VALUES ('Pot Vide 500G', 'UNIT', 'EMPTY_JAR');
+INSERT INTO product (name, unit, category, default_price, attributes_json)
+VALUES ('Pot 500G', 'UNIT', 'FULL_JAR', 7.0, '{"WEIGHT": "500G"}}');
 INSERT INTO product (name, unit, category)
 VALUES ('Barquette Vide', 'UNIT', 'EMPTY_TRAY');
+INSERT INTO product (name, unit, category)
+VALUES ('Barquette', 'UNIT', 'FULL_TRAY');
 INSERT INTO product (name, unit, category)
 VALUES ('Miel Vrac', 'GRAM', 'BULK_HONEY');
 INSERT INTO product (name, unit, category)

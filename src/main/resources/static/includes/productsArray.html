@@ -33,7 +33,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
                         x-text="getLabel('units', product.unit)"></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"
-                        x-text="product.defaultPrice || '-'"></td>
+                        x-text="product.defaultPrice ? product.defaultPrice.toFixed(2) : '-'"></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"
                         x-text="getLabel('categories', product.category) || '-'"></td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">

@@ -5,7 +5,6 @@ import java.util.List;
 
 public enum ProductAttributes {
   WEIGHT("Poids", ProductCategory.FULL_JAR, ProductCategory.BULK_HONEY),
-  SIZE("Taille", ProductCategory.FULL_JAR, ProductCategory.EMPTY_JAR),
   YEAR("Année", ProductCategory.FULL_JAR, ProductCategory.BULK_HONEY, ProductCategory.QUEEN),
   FLOWER("Type de fleur", ProductCategory.FULL_JAR, ProductCategory.BULK_HONEY);
 
