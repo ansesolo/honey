@@ -4,18 +4,25 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum ProductAttributes {
-  WEIGHT(ProductCategory.FULL_JAR, ProductCategory.BULK_HONEY),
-  SIZE(ProductCategory.EMPTY_JAR, ProductCategory.EMPTY_JAR),
-  YEAR(ProductCategory.FULL_JAR, ProductCategory.BULK_HONEY, ProductCategory.QUEEN),
-  FLOWER(ProductCategory.FULL_JAR, ProductCategory.BULK_HONEY);
+  WEIGHT("Poids", ProductCategory.FULL_JAR, ProductCategory.BULK_HONEY),
+  SIZE("Taille", ProductCategory.FULL_JAR, ProductCategory.EMPTY_JAR),
+  YEAR("Année", ProductCategory.FULL_JAR, ProductCategory.BULK_HONEY, ProductCategory.QUEEN),
+  FLOWER("Type de fleur", ProductCategory.FULL_JAR, ProductCategory.BULK_HONEY);
 
+  private final String label;
   private final List<ProductCategory> categories;
 
-  ProductAttributes(ProductCategory... categories) {
+  ProductAttributes(String label, ProductCategory... categories) {
+    this.label = label;
     this.categories = Arrays.asList(categories);
   }
 
   public List<ProductCategory> getCategories() {
     return categories;
+  }
+
+  @Override
+  public String toString() {
+    return label;
   }
 }

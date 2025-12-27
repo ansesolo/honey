@@ -2,6 +2,7 @@ package com.alfsoftwares.honey.api.core.domain.converter;
 
 import com.alfsoftwares.honey.api.product.domain.model.ProductAttributes;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -24,7 +25,7 @@ public class JsonMapConverter
   @Override
   public Map<ProductAttributes, Object> convertToEntityAttribute(String dbData) {
     try {
-      return dbData == null ? null : objectMapper.readValue(dbData, Map.class);
+      return dbData == null ? null : objectMapper.readValue(dbData, new TypeReference<Map<ProductAttributes, Object>>() {});
     } catch (JsonProcessingException e) {
       throw new RuntimeException("Erreur de désérialisation JSON", e);
     }

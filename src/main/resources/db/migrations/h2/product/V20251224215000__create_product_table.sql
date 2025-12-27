@@ -6,7 +6,7 @@ CREATE TABLE product
     default_price   DECIMAL(19, 4),
     unit            VARCHAR(50),
     category        VARCHAR(50),
-    attributes_json JSON,
+    attributes_json VARCHAR(2048),
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by      VARCHAR(255),
     modified_at     TIMESTAMP WITH TIME ZONE,
@@ -14,15 +14,11 @@ CREATE TABLE product
 );
 
 INSERT INTO product (name, unit, category, attributes_json)
-VALUES ('Pot Vide 1KG', 'UNIT', 'EMPTY_JAR', '{
-  "SIZE": "1KG"
-}');
+VALUES ('Pot Vide 1KG', 'UNIT', 'EMPTY_JAR', '{"SIZE": "1KG"}');
 INSERT INTO product (name, unit, category, attributes_json)
-VALUES ('Pot Vide 500G', 'UNIT', 'EMPTY_JAR', '{
-  "SIZE": "500G"
-}');
+VALUES ('Pot Vide 500G', 'UNIT', 'EMPTY_JAR', '{"SIZE": "500G"}');
 INSERT INTO product (name, unit, category)
-VALUES ('Barquette', 'UNIT', 'EMPTY_TRAY');
+VALUES ('Barquette Vide', 'UNIT', 'EMPTY_TRAY');
 INSERT INTO product (name, unit, category)
 VALUES ('Miel Vrac', 'GRAM', 'BULK_HONEY');
 INSERT INTO product (name, unit, category)

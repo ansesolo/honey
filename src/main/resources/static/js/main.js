@@ -1,37 +1,63 @@
 import { formatters } from './utils/formatters.js';
 import { authService } from './services/authService.js';
 import { customerService } from './services/customerService.js';
+import { productService } from './services/productService.js';
 import { formatErrorMessage } from './services/apiClient.js';
 
 function app() {
-    return {
+return {
         currentView: 'login',
         isLoading: false,
         error: '',
         token: localStorage.getItem('authToken') || '',
-        templates: { nav: '', dashboard: '', customers: '', customersForm: '', customersModal: '', customersArray: '', products: '', stocks: '', footer: '', pagination: ''},
+        templates: { nav: '', dashboard: '', customers: '', customersForm: '', customersModal: '', customersArray: '', products: '', productsArray: '', stocks: '', footer: '', pagination: ''},
         credentials: { username: '', password: '' },
         items: [],
         selectedItem: null,
         hoveredItem: null,
+        dictionaries: {units: [], categories: [], attributes: []},
         showCustomerForm: false,
         showCustomerDetail: false,
         customerForm: { firstname: '', lastname: '', email: '', phone: '', street: '', postalCode: '', city: '' },
+        showProductForm: false,
+        showProductDetail: false,
+        productForm: { name: '', unit: '', defaultPrice: '', category: '', attributes: ''},
         currentPage: 1,
-        itemsPerPage: 10,
+        itemsPerPage: 3,
 
         ...formatters,
 
         async init() {
             if (this.token) {
                 await this.loadTemplates();
+                await this.loadDictionaries();
                 this.currentView = 'dashboard';
             }
         },
 
+        async loadDictionaries() {
+            try {
+                const [unitsRes, categoriesRes, attrsRes] = await Promise.all([
+                    productService.getEnumValues('units', this.token, () => this.handleLogout()),
+                    productService.getEnumValues('categories', this.token, () => this.handleLogout()),
+                    productService.getEnumValues('attributes', this.token, () => this.handleLogout())
+                ]);
+                this.dictionaries.units = unitsRes;
+                this.dictionaries.categories = categoriesRes;
+                this.dictionaries.attributes = attrsRes;
+            } catch (err) {
+                console.error("Erreur lors du chargement des référentiels", err);
+            }
+        },
+
+        getLabel(dictionaryName, id) {
+            const item = this.dictionaries[dictionaryName].find(i => i.id === id);
+            return item ? item.label : id;
+        },
+
         async loadTemplates() {
             try {
-                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'stocks', 'footer', 'pagination'];
+                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'productsArray', 'stocks', 'footer', 'pagination'];
                 const contents = await Promise.all(paths.map(p => fetch(`includes/${p}.html`).then(r => r.text())));
                 paths.forEach((p, i) => this.templates[p] = contents[i]);
             } catch (error) {
@@ -63,9 +89,29 @@ function app() {
         },
 
         async navigateTo(view) {
+            this.error = '';
             this.currentView = view;
             if (view === 'customers') await this.loadCustomers();
+            if (view === 'products') await this.loadProducts();
         },
+
+        async loadProducts() {
+            this.isLoading = true;
+            try {
+                this.items = await productService.getAll(this.token, () => this.handleLogout());
+                this.currentPage = 1;
+            } catch (err) {
+                this.error = formatErrorMessage(err);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        openProductForm() { this.selectedItem = null; this.productForm = this.getEmptyProductForm(); this.showProductForm = true; },
+        editProduct(product) { this.selectedItem = product; this.productForm = { ...product }; this.showProductForm = true; },
+        viewProduct(product) { this.selectedItem = product; this.showProductDetail = true; },
+        closeProductForm() { this.showProductForm = false; this.selectedItem = null; this.error = ''},
+        getEmptyProductForm() { return { name: '', unit: '', defaultPrice: '', category: '', attributes: '' }; },
 
         async loadCustomers() {
             this.isLoading = true;

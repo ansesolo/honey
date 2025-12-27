@@ -1,6 +1,17 @@
 package com.alfsoftwares.honey.api.core.domain.model;
 
 public enum Unit {
-  UNIT,
-  GRAM
+  UNIT("Unité"),
+  GRAM("Gramme");
+
+  private final String label;
+
+  Unit(final String label) {
+    this.label = label;
+  }
+
+  @Override
+  public String toString() {
+    return label;
+  }
 }

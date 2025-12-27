@@ -21,7 +21,7 @@ public class ProductEntity extends NamedEntity {
   private ProductCategory category;
 
   @Convert(converter = JsonMapConverter.class)
-  @Column(name = "attributes_json", columnDefinition = "json")
+  @Column(name = "attributes_json")
   private Map<ProductAttributes, Object> attributes;
 
   public ProductEntity() {}

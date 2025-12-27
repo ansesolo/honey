@@ -16,6 +16,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ProblemDetail> handleGenericError(Exception ex) {
+    ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+    problem.setDetail(ex.getMessage());
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+  }
+
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<ProblemDetail> handleNotFound(Exception ex) {
     ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);

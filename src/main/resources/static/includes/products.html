@@ -1,4 +1,25 @@
-<h2 class="text-3xl font-bold text-gray-800 mb-6">Gestion des Produits</h2>
-<div class="bg-white rounded-lg shadow p-6">
-    <p class="text-gray-600">Module à venir...</p>
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-honey-800">Gestion des Produits</h2>
+    <button
+            @click="openProductForm()"
+            class="bg-gradient-to-r from-honey-500 to-bee-500 text-white px-4 py-2 rounded-md hover:from-honey-600 hover:to-bee-600 transition-all shadow-md">
+        ➕ Nouveau Produit
+    </button>
 </div>
+
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" x-show="error">
+    <span x-text="error"></span>
+</div>
+
+<!-- Loading -->
+<div class="text-center py-8" x-show="isLoading">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-honey-600"></div>
+    <p class="text-gray-600 mt-2">Chargement...</p>
+</div>
+
+
+<div x-html="templates.productsArray" x-show="currentView === 'products'"></div>
+
+<div x-html="templates.productsForm" x-show="currentView === 'products'"></div>
+
+<div x-html="templates.productsModal" x-show="currentView === 'products'"></div>
