@@ -25,7 +25,9 @@ public class JsonMapConverter
   @Override
   public Map<ProductAttributes, Object> convertToEntityAttribute(String dbData) {
     try {
-      return dbData == null ? null : objectMapper.readValue(dbData, new TypeReference<Map<ProductAttributes, Object>>() {});
+      return dbData == null
+          ? null
+          : objectMapper.readValue(dbData, new TypeReference<Map<ProductAttributes, Object>>() {});
     } catch (JsonProcessingException e) {
       throw new RuntimeException("Erreur de désérialisation JSON", e);
     }

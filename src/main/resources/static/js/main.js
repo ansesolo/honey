@@ -12,7 +12,7 @@ return {
         token: localStorage.getItem('authToken') || '',
         templates: { nav: '', dashboard: '',
                     customers: '', customersArray: '', customersModal: '', customersForm: '',
-                    products: '', productsArray: '', productsModal: '',
+                    products: '', productsArray: '', productsModal: '', productsForm: '',
                     stocks: '',
                     footer: '', pagination: ''},
         credentials: { username: '', password: '' },
@@ -25,7 +25,7 @@ return {
         customerForm: { firstname: '', lastname: '', email: '', phone: '', street: '', postalCode: '', city: '' },
         showProductForm: false,
         showProductDetail: false,
-        productForm: { name: '', unit: '', defaultPrice: '', category: '', attributes: ''},
+        productForm: { name: '', unit: '', defaultPrice: '', category: '', attributes: []},
         currentPage: 1,
         itemsPerPage: 10,
 
@@ -61,7 +61,7 @@ return {
 
         async loadTemplates() {
             try {
-                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'productsArray', 'productsModal', 'stocks', 'footer', 'pagination'];
+                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'productsArray', 'productsForm', 'productsModal', 'stocks', 'footer', 'pagination'];
                 const contents = await Promise.all(paths.map(p => fetch(`includes/${p}.html`).then(r => r.text())));
                 paths.forEach((p, i) => this.templates[p] = contents[i]);
             } catch (error) {
@@ -111,11 +111,72 @@ return {
             }
         },
 
+        addAttribute() { this.productForm.attributes.push({ key: '', value: '' }); },
+        removeAttributeByIndex(index) {
+            this.productForm.attributes.splice(index, 1);
+        },
         openProductForm() { this.selectedItem = null; this.productForm = this.getEmptyProductForm(); this.showProductForm = true; },
-        editProduct(product) { this.selectedItem = product; this.productForm = { ...product }; this.showProductForm = true; },
+        editProduct(product) {
+            this.selectedItem = product;
+            this.productForm = {
+                name: product.name || '',
+                unit: product.unit || '',
+                defaultPrice: product.defaultPrice || 0,
+                category: product.category || '',
+                attributes: this.convertAttributesToList(product.attributes || {})
+            };
+            this.showProductForm = true;
+        },
         viewProduct(product) { this.selectedItem = product; this.showProductDetail = true; },
         closeProductForm() { this.showProductForm = false; this.selectedItem = null; this.error = ''},
-        getEmptyProductForm() { return { name: '', unit: '', defaultPrice: '', category: '', attributes: '' }; },
+        getEmptyProductForm() { return { name: '', unit: '', defaultPrice: '', category: '', attributes: [] }; },
+
+        async deleteProduct(id) {
+            if (!confirm('Supprimer ce produit ?')) return;
+            try {
+                await productService.delete(id, this.token, () => this.handleLogout());
+                await this.loadProducts();
+            } catch (err) {
+                this.error = formatErrorMessage(err);
+            }
+        },
+
+        convertAttributesToList(attributes) {
+            if (!attributes || Object.keys(attributes).length === 0) {
+                return [];
+            }
+            return Object.entries(attributes).map(([key, value]) => ({
+                key: key,
+                value: value
+            }));
+        },
+
+        async saveProduct() {
+            this.isLoading = true;
+            try {
+                const attributes = {};
+                this.productForm.attributes.forEach(attr => {
+                    if (attr.key && attr.value) {
+                        attributes[attr.key] = attr.value;
+                    }
+                });
+
+                const productData = {
+                    ...this.productForm,
+                    attributes: attributes
+                };
+                if (this.selectedItem?.publicId) {
+                    productData.publicId = this.selectedItem.publicId;
+                }
+                await productService.save(productData, this.token, () => this.handleLogout());
+                await this.loadProducts();
+                this.closeProductForm();
+            } catch (err) {
+                this.error = formatErrorMessage(err);
+            } finally {
+                this.isLoading = false;
+            }
+        },
 
         async loadCustomers() {
             this.isLoading = true;
