@@ -1,7 +1,7 @@
-package com.alfsoftwares.honey.api.product.domain.port.out;
+package com.alfsoftwares.honey.api.stock.domain.port.out;
 
-import com.alfsoftwares.honey.api.product.domain.model.StockEntity;
-import com.alfsoftwares.honey.api.product.domain.model.StockMovementEntity;
+import com.alfsoftwares.honey.api.stock.domain.model.StockEntity;
+import com.alfsoftwares.honey.api.stock.domain.model.StockMovementEntity;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

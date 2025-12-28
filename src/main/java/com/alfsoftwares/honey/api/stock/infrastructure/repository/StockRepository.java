@@ -1,8 +1,8 @@
-package com.alfsoftwares.honey.api.product.infrastructure.repository;
+package com.alfsoftwares.honey.api.stock.infrastructure.repository;
 
-import com.alfsoftwares.honey.api.product.domain.model.StockEntity;
-import com.alfsoftwares.honey.api.product.domain.model.StockMovementEntity;
-import com.alfsoftwares.honey.api.product.domain.port.out.StockGateway;
+import com.alfsoftwares.honey.api.stock.domain.model.StockEntity;
+import com.alfsoftwares.honey.api.stock.domain.model.StockMovementEntity;
+import com.alfsoftwares.honey.api.stock.domain.port.out.StockGateway;
 import java.math.BigDecimal;
 import java.util.*;
 import org.springframework.stereotype.Repository;

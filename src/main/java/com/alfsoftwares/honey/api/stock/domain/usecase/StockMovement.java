@@ -1,14 +1,14 @@
-package com.alfsoftwares.honey.api.product.domain.usecase;
+package com.alfsoftwares.honey.api.stock.domain.usecase;
 
 import com.alfsoftwares.honey.api.core.application.error.InvalidRequestException;
 import com.alfsoftwares.honey.api.core.application.error.NotFoundException;
-import com.alfsoftwares.honey.api.product.application.model.StockMovementRequest;
 import com.alfsoftwares.honey.api.product.domain.model.ProductEntity;
-import com.alfsoftwares.honey.api.product.domain.model.StockEntity;
-import com.alfsoftwares.honey.api.product.domain.model.StockMovementEntity;
-import com.alfsoftwares.honey.api.product.domain.port.in.StockMovementAdapter;
 import com.alfsoftwares.honey.api.product.domain.port.out.ProductGateway;
-import com.alfsoftwares.honey.api.product.domain.port.out.StockGateway;
+import com.alfsoftwares.honey.api.stock.application.model.StockMovementRequest;
+import com.alfsoftwares.honey.api.stock.domain.model.StockEntity;
+import com.alfsoftwares.honey.api.stock.domain.model.StockMovementEntity;
+import com.alfsoftwares.honey.api.stock.domain.port.in.StockMovementAdapter;
+import com.alfsoftwares.honey.api.stock.domain.port.out.StockGateway;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

@@ -1,5 +1,6 @@
-package com.alfsoftwares.honey.api.product.domain.model;
+package com.alfsoftwares.honey.api.stock.domain.model;
 
+import com.alfsoftwares.honey.api.product.domain.model.ProductCategory;
 import java.util.Arrays;
 import java.util.List;
 

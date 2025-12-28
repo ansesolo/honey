@@ -31,7 +31,7 @@ public class ProductRestController implements ProductRestControllerDocumentation
   private final CUDProductAdapter cudProductAdapter;
 
   public ProductRestController(
-      final SearchProductAdapter searchProductAdapter, final CUDProductAdapter cudProductAdapter) {
+          final SearchProductAdapter searchProductAdapter, final CUDProductAdapter cudProductAdapter) {
     this.searchProductAdapter = searchProductAdapter;
     this.cudProductAdapter = cudProductAdapter;
   }

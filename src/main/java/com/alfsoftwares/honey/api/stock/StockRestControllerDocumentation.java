@@ -1,8 +1,8 @@
-package com.alfsoftwares.honey.api.product;
+package com.alfsoftwares.honey.api.stock;
 
-import com.alfsoftwares.honey.api.product.application.model.StockEntityModel;
-import com.alfsoftwares.honey.api.product.application.model.StockMovementRequest;
-import com.alfsoftwares.honey.api.product.domain.model.ProductEntity;
+import com.alfsoftwares.honey.api.stock.application.model.StockEntityModel;
+import com.alfsoftwares.honey.api.stock.application.model.StockMovementRequest;
+import com.alfsoftwares.honey.api.stock.domain.model.StockEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -34,7 +34,7 @@ public interface StockRestControllerDocumentation {
                     @Content(
                         mediaType = "application/json",
                         array =
-                            @ArraySchema(schema = @Schema(implementation = ProductEntity.class)))),
+                            @ArraySchema(schema = @Schema(implementation = StockEntity.class)))),
             @ApiResponse(
                 responseCode = "400",
                 description = "Bad request",
@@ -71,7 +71,7 @@ public interface StockRestControllerDocumentation {
             content =
                 @Content(
                     mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = ProductEntity.class)))),
+                    array = @ArraySchema(schema = @Schema(implementation = StockEntity.class)))),
         @ApiResponse(
             responseCode = "403",
             description = "Not authorized",
@@ -80,7 +80,7 @@ public interface StockRestControllerDocumentation {
                     mediaType = "application/json",
                     schema = @Schema(implementation = Void.class))),
       })
-  ResponseEntity<List<StockEntityModel>> getStock();
+  ResponseEntity<List<StockEntityModel>> getStocks();
 
   @Operation(
       summary = "Get a product stock",
@@ -94,7 +94,7 @@ public interface StockRestControllerDocumentation {
             content =
                 @Content(
                     mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = ProductEntity.class)))),
+                    array = @ArraySchema(schema = @Schema(implementation = StockEntity.class)))),
         @ApiResponse(
             responseCode = "403",
             description = "Not authorized",

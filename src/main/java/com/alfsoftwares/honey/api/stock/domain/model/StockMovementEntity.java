@@ -1,6 +1,7 @@
-package com.alfsoftwares.honey.api.product.domain.model;
+package com.alfsoftwares.honey.api.stock.domain.model;
 
 import com.alfsoftwares.honey.api.core.domain.model.BaseEntity;
+import com.alfsoftwares.honey.api.product.domain.model.ProductEntity;
 import java.math.BigDecimal;
 
 public class StockMovementEntity extends BaseEntity {
