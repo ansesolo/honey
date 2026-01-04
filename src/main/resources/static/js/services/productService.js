@@ -1,8 +1,11 @@
 import { fetchAPI } from './apiClient.js';
 
 export const productService = {
-    async getAll(token, logoutCb) {
-        return fetchAPI('/api/products', {}, token, logoutCb);
+    async getAll(token, logoutCb, filters = {}) {
+        const queryParams = new URLSearchParams(filters).toString();
+        const url = `/api/products${queryParams ? `?${queryParams}` : ''}`;
+
+        return fetchAPI(url, {}, token, logoutCb);
     },
     async save(product, token, logoutCb) {
         const method = product.publicId ? 'PUT' : 'POST';

@@ -3,12 +3,13 @@ package com.alfsoftwares.honey.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.alfsoftwares.honey.api.authentication.domain.usecase.CreateToken;
+import com.alfsoftwares.honey.authentication.domain.usecase.CreateToken;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.core.DefaultOAuth2AuthenticatedPrincipal;
@@ -25,6 +26,7 @@ public class RestControllerTest {
   private final MockMvc mockMvc;
   private final CreateToken createToken;
 
+  @Autowired
   public RestControllerTest(MockMvc mockMvc, CreateToken createToken) {
     this.mockMvc = mockMvc;
     this.createToken = createToken;

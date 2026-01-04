@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.modulith.Modulithic;
 
 @SpringBootApplication
-@Modulithic( //
-    sharedModules = {"com.alfsoftwares.honey.api.core"},
+@Modulithic(
+    sharedModules = {"com.alfsoftwares.honey.core"},
     useFullyQualifiedModuleNames = true)
 public class HoneyApplication {
 

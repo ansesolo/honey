@@ -24,7 +24,7 @@ VALUES ('Pot 500G', 'UNIT', 'FULL_JAR', 7.0, '{"WEIGHT": "500G"}}');
 INSERT INTO product (name, unit, category)
 VALUES ('Barquette Vide', 'UNIT', 'EMPTY_TRAY');
 INSERT INTO product (name, unit, category)
-VALUES ('Barquette', 'UNIT', 'FULL_TRAY');
+VALUES ('Barquette', 'GRAM', 'FULL_TRAY');
 INSERT INTO product (name, unit, category)
 VALUES ('Miel Vrac', 'GRAM', 'BULK_HONEY');
 INSERT INTO product (name, unit, category)

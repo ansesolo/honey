@@ -2,6 +2,7 @@ import { formatters } from './utils/formatters.js';
 import { authService } from './services/authService.js';
 import { customerService } from './services/customerService.js';
 import { productService } from './services/productService.js';
+import { stockService } from './services/stockService.js';
 import { formatErrorMessage } from './services/apiClient.js';
 
 function app() {
@@ -13,42 +14,56 @@ return {
         templates: { nav: '', dashboard: '',
                     customers: '', customersArray: '', customersModal: '', customersForm: '',
                     products: '', productsArray: '', productsModal: '', productsForm: '',
-                    stocks: '',
+                    stocks: '', stocksForm: '',
                     footer: '', pagination: ''},
         credentials: { username: '', password: '' },
         items: [],
         selectedItem: null,
         hoveredItem: null,
-        dictionaries: {units: [], categories: [], attributes: []},
+        dictionaries: {units: [], categories: [], attributes: [], stockRules: []},
+
         showCustomerForm: false,
         showCustomerDetail: false,
         customerForm: { firstname: '', lastname: '', email: '', phone: '', street: '', postalCode: '', city: '' },
+
         showProductForm: false,
         showProductDetail: false,
         productForm: { name: '', unit: '', defaultPrice: '', category: '', attributes: []},
+
+        showStockActionModal: false,
+        currentStockAction: null,
+        stockActionForm: { productId: '', date: '', quantity: 0, reason: '' },
+        quickQuantities: {},
+        products: [],
+
         currentPage: 1,
         itemsPerPage: 10,
 
         ...formatters,
 
         async init() {
+            const token = localStorage.getItem('token');
             if (this.token) {
                 await this.loadTemplates();
                 await this.loadDictionaries();
                 this.currentView = 'dashboard';
+            } else {
+                this.currentView = 'login';
             }
         },
 
         async loadDictionaries() {
             try {
-                const [unitsRes, categoriesRes, attrsRes] = await Promise.all([
+                const [unitsRes, categoriesRes, attrsRes, stockRules] = await Promise.all([
                     productService.getEnumValues('units', this.token, () => this.handleLogout()),
                     productService.getEnumValues('categories', this.token, () => this.handleLogout()),
-                    productService.getEnumValues('attributes', this.token, () => this.handleLogout())
+                    productService.getEnumValues('attributes', this.token, () => this.handleLogout()),
+                    stockService.getStockRules(this.token, () => this.handleLogout())
                 ]);
                 this.dictionaries.units = unitsRes;
                 this.dictionaries.categories = categoriesRes;
                 this.dictionaries.attributes = attrsRes;
+                this.dictionaries.stockRules = stockRules;
             } catch (err) {
                 console.error("Erreur lors du chargement des référentiels", err);
             }
@@ -61,7 +76,7 @@ return {
 
         async loadTemplates() {
             try {
-                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'productsArray', 'productsForm', 'productsModal', 'stocks', 'footer', 'pagination'];
+                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'productsArray', 'productsForm', 'productsModal', 'stocks', 'stocksForm', 'footer', 'pagination'];
                 const contents = await Promise.all(paths.map(p => fetch(`includes/${p}.html`).then(r => r.text())));
                 paths.forEach((p, i) => this.templates[p] = contents[i]);
             } catch (error) {
@@ -97,6 +112,125 @@ return {
             this.currentView = view;
             if (view === 'customers') await this.loadCustomers();
             if (view === 'products') await this.loadProducts();
+            if (view === 'stocks') await this.loadStocks();
+        },
+
+        async loadStocks() {
+            this.isLoading = true;
+            try {
+                this.products = await productService.getAll(this.token, () => this.handleLogout());
+                this.items = await stockService.getAll(this.token, () => this.handleLogout());
+                this.currentPage = 1;
+            } catch (err) {
+                this.error = formatErrorMessage(err);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        openStockAction(actionType) {
+            this.currentStockAction = actionType;
+            this.stockActionForm = {
+                productId: '',
+                date: this.getTodayDate(),
+                quantity: 0,
+                reason: ''
+            };
+            this.showStockActionModal = true;
+        },
+
+        getTodayDate() {
+            return new Date().toISOString().split('T')[0];
+        },
+
+        getActionTitle(actionType) {
+            if (!actionType) return "";
+            const rule = this.dictionaries.stockRules.find(r => r.id === actionType);
+            return rule?.attributes?.label || actionType;
+        },
+
+        autoSelectProduct() {
+            const filtered = this.getFilteredProducts(this.currentStockAction);
+            this.stockActionForm.quantity = 0;
+            this.stockActionForm.reason = '';
+            this.stockActionForm.date = this.getTodayDate();
+
+            if (filtered && filtered.length > 0) {
+                // On attend que le DOM (les <option>) soit prêt
+                this.$nextTick(() => {
+                    this.stockActionForm.productId = filtered[0].publicId;
+                });
+            } else {
+                this.stockActionForm.productId = '';
+            }
+        },
+
+        getFilteredProducts(actionType) {
+            if (!actionType) return [];
+            const rule = this.dictionaries.stockRules.find(r => r.id === actionType);
+            const allowedCategories = rule?.attributes?.categories;
+
+            return this.products.filter(p => allowedCategories.includes(p.category));
+        },
+
+        async submitStockAction() {
+            this.isLoading = true;
+            try {
+                const movementData = {
+                    productId: this.stockActionForm.productId,
+                    movementDate: this.stockActionForm.date,
+                    quantity: parseFloat(this.stockActionForm.quantity),
+                    type: this.currentStockAction,
+                    reason: this.stockActionForm.reason || ''
+                };
+
+                await stockService.createMovement(movementData, this.token, () => this.handleLogout());
+                await this.loadStocks();
+                this.showStockActionModal = false;
+                this.error = '';
+            } catch (err) {
+                this.error = formatErrorMessage(err);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        getQuickQuantity(stockId) {
+            return this.quickQuantities[stockId] || 1;
+        },
+
+        setQuickQuantity(stockId, value) {
+            this.quickQuantities[stockId] = parseInt(value) || 1;
+        },
+
+        async quickAdjustStock(stock, direction) {
+            const quantity = this.getQuickQuantity(stock.publicId);
+            const actualQuantity = quantity * direction;
+            const movementType = direction > 0 ? 'INCREASE_STOCK' : 'DECREASE_STOCK';
+
+            this.isLoading = true;
+            try {
+                const movementData = {
+                    productId: stock.product.publicId,
+                    movementDate: this.getTodayDate(),
+                    quantity: Math.abs(actualQuantity),
+                    type: movementType,
+                    reason: `Ajustement rapide`
+                };
+
+                await stockService.createMovement(movementData, this.token, () => this.handleLogout());
+                await this.loadStocks();
+                this.error = '';
+            } catch (err) {
+                this.error = formatErrorMessage(err);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        viewStock(stock) {
+            this.selectedStock = stock;
+            this.showStockDetail = true;
         },
 
         async loadProducts() {

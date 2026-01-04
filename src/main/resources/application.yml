@@ -16,6 +16,7 @@ spring:
     locations:
       - "classpath:db/migrations/${spring.datasource.platform}/customer"
       - "classpath:db/migrations/${spring.datasource.platform}/product"
+      - "classpath:db/migrations/${spring.datasource.platform}/stock"
 
 server:
   port: 8042
