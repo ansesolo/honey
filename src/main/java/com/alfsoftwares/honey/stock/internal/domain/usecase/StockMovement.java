@@ -39,6 +39,10 @@ public class StockMovement implements StockMovementAdapter {
       throw new InvalidRequestException("Unauthorized stock movement for this product category");
     }
 
+    if (product.category().isNeedFlower() && stockMovement.flower() == null) {
+      throw new InvalidRequestException("Flower is needed for this stock movement");
+    }
+
     Integer year = stockMovement.movementDate().getYear();
 
     StockEntity stockEntity =

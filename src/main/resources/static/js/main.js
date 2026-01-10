@@ -14,13 +14,13 @@ return {
         templates: { nav: '', dashboard: '',
                     customers: '', customersArray: '', customersModal: '', customersForm: '',
                     products: '', productsArray: '', productsModal: '', productsForm: '',
-                    stocks: '', stocksForm: '',
+                    stocks: '', stocksArray: '', stocksForm: '',
                     footer: '', pagination: ''},
         credentials: { username: '', password: '' },
         items: [],
         selectedItem: null,
         hoveredItem: null,
-        dictionaries: {units: [], categories: [], attributes: [], stockRules: []},
+        dictionaries: {units: [], categories: [], attributes: [], stockRules: [], flowers: [], catFlowers: []},
 
         showCustomerForm: false,
         showCustomerDetail: false,
@@ -30,9 +30,9 @@ return {
         showProductDetail: false,
         productForm: { name: '', unit: '', defaultPrice: '', category: '', attributes: []},
 
-        showStockActionModal: false,
+        showStockForm: false,
         currentStockAction: null,
-        stockActionForm: { productId: '', date: '', quantity: 0, reason: '' },
+        stockActionForm: { productId: '', date: '', flower: '', quantity: 0, reason: '' },
         quickQuantities: {},
         products: [],
 
@@ -54,29 +54,38 @@ return {
 
         async loadDictionaries() {
             try {
-                const [unitsRes, categoriesRes, attrsRes, stockRules] = await Promise.all([
+                const [unitsRes, categoriesRes, attrsRes, flowersRes, catFlowers, stockRules] = await Promise.all([
                     productService.getEnumValues('units', this.token, () => this.handleLogout()),
                     productService.getEnumValues('categories', this.token, () => this.handleLogout()),
                     productService.getEnumValues('attributes', this.token, () => this.handleLogout()),
+                    productService.getEnumValues('flowers', this.token, () => this.handleLogout()),
+                    productService.getCategoriesWithFlower(this.token, () => this.handleLogout()),
                     stockService.getStockRules(this.token, () => this.handleLogout())
                 ]);
                 this.dictionaries.units = unitsRes;
                 this.dictionaries.categories = categoriesRes;
                 this.dictionaries.attributes = attrsRes;
                 this.dictionaries.stockRules = stockRules;
+                this.dictionaries.catFlowers = catFlowers;
+                this.dictionaries.flowers = flowersRes;
             } catch (err) {
                 console.error("Erreur lors du chargement des référentiels", err);
             }
         },
 
         getLabel(dictionaryName, id) {
+            if (!id) return '-';
             const item = this.dictionaries[dictionaryName].find(i => i.id === id);
             return item ? item.label : id;
         },
 
+        getDictionary(dictionaryName) {
+            return this.dictionaries[dictionaryName];
+        },
+
         async loadTemplates() {
             try {
-                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'productsArray', 'productsForm', 'productsModal', 'stocks', 'stocksForm', 'footer', 'pagination'];
+                const paths = ['nav', 'dashboard', 'customers', 'customersForm', 'customersModal', 'customersArray', 'products', 'productsArray', 'productsForm', 'productsModal', 'stocks', 'stocksArray','stocksForm', 'footer', 'pagination'];
                 const contents = await Promise.all(paths.map(p => fetch(`includes/${p}.html`).then(r => r.text())));
                 paths.forEach((p, i) => this.templates[p] = contents[i]);
             } catch (error) {
@@ -127,16 +136,15 @@ return {
                 this.isLoading = false;
             }
         },
-
+        getEmptyStockForm() {
+           return {productId: '', date: this.getTodayDate(), flower: '', quantity: 0, reason: '' };
+        },
+        closeStockForm() { this.showStockForm = false; this.selectedItem = null; this.error = ''},
         openStockAction(actionType) {
+            this.selectedItem = null;
             this.currentStockAction = actionType;
-            this.stockActionForm = {
-                productId: '',
-                date: this.getTodayDate(),
-                quantity: 0,
-                reason: ''
-            };
-            this.showStockActionModal = true;
+            this.stockActionForm = this.getEmptyStockForm();
+            this.showStockForm = true;
         },
 
         getTodayDate() {
@@ -151,18 +159,24 @@ return {
 
         autoSelectProduct() {
             const filtered = this.getFilteredProducts(this.currentStockAction);
-            this.stockActionForm.quantity = 0;
-            this.stockActionForm.reason = '';
-            this.stockActionForm.date = this.getTodayDate();
 
-            if (filtered && filtered.length > 0) {
-                // On attend que le DOM (les <option>) soit prêt
+            if (filtered && filtered.length === 1) {
                 this.$nextTick(() => {
                     this.stockActionForm.productId = filtered[0].publicId;
                 });
             } else {
                 this.stockActionForm.productId = '';
             }
+        },
+
+        shouldShowFlower() {
+            if (this.currentStockAction === 'PURCHASE') return false;
+
+            const filtered = this.getFilteredProducts(this.currentStockAction);
+            const selectedProduct = filtered.find(p => p.publicId === this.stockActionForm.productId);
+            if (!selectedProduct) return false;
+
+            return this.dictionaries.catFlowers.some(c => c.id === selectedProduct.category);
         },
 
         getFilteredProducts(actionType) {
@@ -180,13 +194,14 @@ return {
                     productId: this.stockActionForm.productId,
                     movementDate: this.stockActionForm.date,
                     quantity: parseFloat(this.stockActionForm.quantity),
+                    flower: this.stockActionForm.flower,
                     type: this.currentStockAction,
                     reason: this.stockActionForm.reason || ''
                 };
 
                 await stockService.createMovement(movementData, this.token, () => this.handleLogout());
                 await this.loadStocks();
-                this.showStockActionModal = false;
+                this.showStockForm = false;
                 this.error = '';
             } catch (err) {
                 this.error = formatErrorMessage(err);

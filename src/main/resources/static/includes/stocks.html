@@ -1,142 +1,35 @@
-<!-- Vue Stocks -->
-<div x-show="currentView === 'stocks'" class="space-y-4">
-    <!-- En-tête avec actions principales -->
-    <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-honey-800">📦 Gestion des Stocks</h2>
-            <div class="flex gap-2">
-                <button
-                        @click="openStockAction('HARVEST')"
-                        class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition flex items-center gap-2"
-                        x-text="getActionTitle('HARVEST')">
-                    🌾
-                </button>
-                <button
-                        @click="openStockAction('PRODUCTION')"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition flex items-center gap-2"
-                        x-text="getActionTitle('PRODUCTION')">
-                    🏭
-                </button>
-                <button
-                        @click="openStockAction('PURCHASE')"
-                        class="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition flex items-center gap-2"
-                        x-text="getActionTitle('PURCHASE')"
-                    🛒
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Message d'erreur -->
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" x-show="error">
-        <span x-text="error"></span>
-    </div>
-
-    <!-- Tableau des stocks -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Année
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Produit
-                    </th>
-                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Quantité
-                    </th>
-                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Statut
-                    </th>
-                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions rapides
-                    </th>
-                </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                <template x-if="isLoading">
-                    <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                            Chargement...
-                        </td>
-                    </tr>
-                </template>
-
-                <template x-if="!isLoading && items.length === 0">
-                    <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                            Aucun stock disponible
-                        </td>
-                    </tr>
-                </template>
-
-                <template x-for="stock in items" :key="stock.publicId">
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm text-gray-500"
-                                  x-text="stock.stockYear"></span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900" x-text="stock.productName"></div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span class="text-lg font-bold text-gray-900" x-text="stock.quantity"></span>
-                            <span class="text-sm text-gray-500 ml-1"
-                                  x-text="getLabel('units', stock.productUnit)"></span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span x-show="stock.quantity > (stock.alertThreshold || 10)"
-                                  class="text-2xl">🟢</span>
-                            <span x-show="stock.quantity > 0 && stock.quantity <= (stock.alertThreshold || 10)"
-                                  class="text-2xl">🟠</span>
-                            <span x-show="stock.quantity === 0" class="text-2xl">🔴</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <!-- Boutons d'ajustement rapide -->
-                                <div class="flex items-center gap-1 border rounded-md">
-                                    <button
-                                            @click="quickAdjustStock(stock, -1)"
-                                            class="px-2 py-1 hover:bg-gray-100 text-red-600 font-bold"
-                                            title="Retirer 1">
-                                        −
-                                    </button>
-                                    <div class="px-2 border-x">
-                                        <input
-                                                type="number"
-                                                min="1"
-                                                :value="getQuickQuantity(stock.publicId)"
-                                                @input="setQuickQuantity(stock.publicId, $event.target.value)"
-                                                class="w-12 text-center border-0 focus:ring-0 p-0"
-                                                style="appearance: textfield; -moz-appearance: textfield;">
-                                    </div>
-                                    <button
-                                            @click="quickAdjustStock(stock, 1)"
-                                            class="px-2 py-1 hover:bg-gray-100 text-green-600 font-bold"
-                                            title="Ajouter 1">
-                                        +
-                                    </button>
-                                </div>
-
-                                <!-- Bouton détails -->
-                                <button
-                                        @click="viewStock(stock)"
-                                        class="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded-md"
-                                        title="Voir détails">
-                                    👁️
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </template>
-                </tbody>
-            </table>
-        </div>
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-honey-800">Gestion des Stocks</h2>
+    <div class="flex flex-wrap justify-end gap-2">
+        <button
+                @click="openStockAction('HARVEST')"
+                class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition flex items-center gap-2">
+            🌾<span x-text="getActionTitle('HARVEST')"></span>
+        </button>
+        <button
+                @click="openStockAction('PRODUCTION')"
+                class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition flex items-center gap-2">
+            🏭 <span x-text="getActionTitle('PRODUCTION')"></span>
+        </button>
+        <button
+                @click="openStockAction('PURCHASE')"
+                class="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition flex items-center gap-2">
+            🛒 <span x-text="getActionTitle('PURCHASE')"></span>
+        </button>
     </div>
 </div>
 
-<div x-html="templates.pagination" x-show="currentView === 'stocks'"></div>
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" x-show="error">
+    <span x-text="error"></span>
+</div>
+
+<!-- Loading -->
+<div class="text-center py-8" x-show="isLoading">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-honey-600"></div>
+    <p class="text-gray-600 mt-2">Chargement...</p>
+</div>
+
+<div x-html="templates.stocksArray" x-show="currentView === 'stocks'"></div>
 
 <div x-html="templates.stocksForm" x-show="currentView === 'stocks'"></div>
+

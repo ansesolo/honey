@@ -1,5 +1,8 @@
 package com.alfsoftwares.honey.core.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.apache.commons.lang3.StringUtils;
+
 public enum Flower {
   ALL_FLOWERS("Toutes fleurs"),
   ACACIA("Acacia"),
@@ -12,6 +15,14 @@ public enum Flower {
 
   Flower(final String label) {
     this.label = label;
+  }
+
+  @JsonCreator
+  public static Flower fromString(String value) {
+    if (StringUtils.isEmpty(value)) {
+      return null;
+    }
+    return Flower.valueOf(value);
   }
 
   @Override

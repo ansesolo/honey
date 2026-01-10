@@ -3,6 +3,7 @@ package com.alfsoftwares.honey.product.internal.application;
 import static com.alfsoftwares.honey.product.internal.application.ProductMapper.fromEntityToDto;
 
 import com.alfsoftwares.honey.core.domain.model.Category;
+import com.alfsoftwares.honey.core.domain.model.Flower;
 import com.alfsoftwares.honey.core.domain.model.Unit;
 import com.alfsoftwares.honey.product.api.ProductServiceApi;
 import com.alfsoftwares.honey.product.internal.application.model.EnumValue;
@@ -36,6 +37,7 @@ public class ProductRestController implements ProductRestControllerDocumentation
       Map.of(
           "units", Unit.class,
           "attributes", ProductAttributes.class,
+          "flowers", Flower.class,
           "categories", Category.class);
 
   public ProductRestController(
@@ -48,6 +50,7 @@ public class ProductRestController implements ProductRestControllerDocumentation
   }
 
   @GetMapping("/enum/{name}")
+  @PreAuthorize("hasRole('USER')")
   public ResponseEntity<List<EnumValue>> getEnumValues(@PathVariable String name) {
     Class<? extends Enum<?>> enumClass = allowedEnums.get(name.toLowerCase());
 
@@ -59,6 +62,18 @@ public class ProductRestController implements ProductRestControllerDocumentation
         .body(
             Arrays.stream(enumClass.getEnumConstants())
                 .map(e -> new EnumValue(e.name(), e.toString()))
+                .toList());
+  }
+
+  @GetMapping("/categories/hasflowers")
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<List<EnumValue>> getCategoriesWithFlower() {
+
+    return ResponseEntity.ok()
+        .body(
+            Arrays.stream(Category.values())
+                .filter(Category::isNeedFlower)
+                .map(c -> new EnumValue(c.name(), c.toString()))
                 .toList());
   }
 

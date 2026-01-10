@@ -20,5 +20,8 @@ export const productService = {
     },
     async getEnumValues(id, token, logoutCb) {
         return fetchAPI(`/api/products/enum/${id}`, { method: 'GET' }, token, logoutCb);
+    },
+    async getCategoriesWithFlower(token, logoutCb) {
+        return fetchAPI(`/api/products/categories/hasflowers`, { method: 'GET' }, token, logoutCb);
     }
 };

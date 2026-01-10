@@ -54,6 +54,9 @@ public class ApiExceptionHandler {
               .collect(
                   Collectors.toMap(
                       v -> v.getPropertyPath().toString(), ConstraintViolation::getMessage)));
+    } else if (ex instanceof InvalidRequestException) {
+      problem.setDetail("Invalid value");
+      problem.setProperty("errors", ex.getMessage());
     } else {
       problem.setDetail("Unexpected error");
       problem.setProperty("errors", ex.getMessage());
