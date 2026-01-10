@@ -28,7 +28,7 @@ return {
 
         showProductForm: false,
         showProductDetail: false,
-        productForm: { name: '', unit: '', defaultPrice: '', category: '', attributes: []},
+        productForm: { name: '', unit: '', defaultPrice: '', category: '', flower: '', weight: ''},
 
         showStockForm: false,
         currentStockAction: null,
@@ -169,16 +169,6 @@ return {
             }
         },
 
-        shouldShowFlower() {
-            if (this.currentStockAction === 'PURCHASE') return false;
-
-            const filtered = this.getFilteredProducts(this.currentStockAction);
-            const selectedProduct = filtered.find(p => p.publicId === this.stockActionForm.productId);
-            if (!selectedProduct) return false;
-
-            return this.dictionaries.catFlowers.some(c => c.id === selectedProduct.category);
-        },
-
         getFilteredProducts(actionType) {
             if (!actionType) return [];
             const rule = this.dictionaries.stockRules.find(r => r.id === actionType);
@@ -260,10 +250,6 @@ return {
             }
         },
 
-        addAttribute() { this.productForm.attributes.push({ key: '', value: '' }); },
-        removeAttributeByIndex(index) {
-            this.productForm.attributes.splice(index, 1);
-        },
         openProductForm() { this.selectedItem = null; this.productForm = this.getEmptyProductForm(); this.showProductForm = true; },
         editProduct(product) {
             this.selectedItem = product;
@@ -272,13 +258,14 @@ return {
                 unit: product.unit || '',
                 defaultPrice: product.defaultPrice || 0,
                 category: product.category || '',
-                attributes: this.convertAttributesToList(product.attributes || {})
+                flower: product.flower || '',
+                weight: product.weight || 0
             };
             this.showProductForm = true;
         },
         viewProduct(product) { this.selectedItem = product; this.showProductDetail = true; },
         closeProductForm() { this.showProductForm = false; this.selectedItem = null; this.error = ''},
-        getEmptyProductForm() { return { name: '', unit: '', defaultPrice: '', category: '', attributes: [] }; },
+        getEmptyProductForm() { return { name: '', unit: '', defaultPrice: '', category: '', flower: '', weight: '' }; },
 
         async deleteProduct(id) {
             if (!confirm('Supprimer ce produit ?')) return;
@@ -290,29 +277,19 @@ return {
             }
         },
 
-        convertAttributesToList(attributes) {
-            if (!attributes || Object.keys(attributes).length === 0) {
-                return [];
-            }
-            return Object.entries(attributes).map(([key, value]) => ({
-                key: key,
-                value: value
-            }));
+        shouldShowFlowerInProductForm() {
+            return this.dictionaries.catFlowers.some(c => c.id === this.productForm.category);
+        },
+
+        shouldShowWeightInProductForm() {
+            return 'FULL_JAR' === this.productForm.category;
         },
 
         async saveProduct() {
             this.isLoading = true;
             try {
-                const attributes = {};
-                this.productForm.attributes.forEach(attr => {
-                    if (attr.key && attr.value) {
-                        attributes[attr.key] = attr.value;
-                    }
-                });
-
                 const productData = {
                     ...this.productForm,
-                    attributes: attributes
                 };
                 if (this.selectedItem?.publicId) {
                     productData.publicId = this.selectedItem.publicId;

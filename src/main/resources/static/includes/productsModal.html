@@ -14,9 +14,15 @@
 
         <template x-if="selectedItem">
             <div class="space-y-3">
-                <div>
-                    <span class="text-sm text-gray-500">Nom du produit:</span>
-                    <p class="font-medium text-lg" x-text="selectedItem.name"></p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-sm text-gray-500">Nom du produit:</span>
+                        <p class="font-medium text-lg" x-text="selectedItem.name"></p>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-500">Fleur:</span>
+                        <p class="font-medium text-lg" x-text="getLabel('flowers', selectedItem.flower)"></p>
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -28,27 +34,18 @@
                         <p class="font-medium" x-text="getLabel('units', selectedItem.unit) || '-'"></p>
                     </div>
                 </div>
-                <div>
-                    <span class="text-sm text-gray-500">Prix par défaut:</span>
-                    <p class="font-medium text-lg text-green-600"
-                       x-text="selectedItem.defaultPrice ? `${selectedItem.defaultPrice.toFixed(2)} €` : '-'"></p>
-                </div>
-
-                <!-- Attributs supplémentaires -->
-                <template x-if="selectedItem.attributes && Object.keys(selectedItem.attributes).length > 0">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <span class="text-sm text-gray-500 block mb-2">Attributs:</span>
-                        <div class="bg-gray-50 rounded-md p-3 space-y-2">
-                            <template :key="key" x-for="(value, key) in selectedItem.attributes">
-                                <div class="flex text-sm gap-4">
-                                    <span class="text-gray-600 capitalize min-w-32 flex-shrink-0"
-                                          x-text="getLabel('attributes', key)"></span>
-                                    <span class="font-medium flex-1" x-text="value"></span>
-                                </div>
-                            </template>
-                        </div>
+                        <span class="text-sm text-gray-500">Prix par défaut:</span>
+                        <p class="font-medium text-lg text-green-600"
+                           x-text="selectedItem.defaultPrice ? `${selectedItem.defaultPrice.toFixed(2)} €` : '-'"></p>
                     </div>
-                </template>
+                    <div>
+                        <span class="text-sm text-gray-500">Poids:</span>
+                        <p class="font-medium text-lg text-green-600"
+                           x-text="selectedItem.weight ? `${selectedItem.weight} g` : '-'"></p>
+                    </div>
+                </div>
             </div>
         </template>
 

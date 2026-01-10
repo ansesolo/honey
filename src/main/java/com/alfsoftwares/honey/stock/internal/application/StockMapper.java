@@ -26,10 +26,9 @@ public class StockMapper {
         entity.getModifiedBy(),
         entity.getModifiedAt(),
         entity.getProductId(),
-        product.name(),
+        product.getFullName(),
         product.unit(),
         entity.getStockYear(),
-        entity.getFlower(),
         entity.getQuantity(),
         entity.getAveragePrice());
   }

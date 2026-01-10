@@ -6,7 +6,8 @@ CREATE TABLE product
     default_price   DECIMAL(19, 4),
     unit            VARCHAR(50),
     category        VARCHAR(50),
-    attributes_json VARCHAR(2048),
+    flower VARCHAR(50),
+    weight INTEGER,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by      VARCHAR(255),
     modified_at     TIMESTAMP WITH TIME ZONE,
@@ -15,17 +16,17 @@ CREATE TABLE product
 
 INSERT INTO product (name, unit, category)
 VALUES ('Pot Vide 1KG', 'UNIT', 'EMPTY_JAR');
-INSERT INTO product (name, unit, category, default_price, attributes_json)
-VALUES ('Pot 1KG', 'UNIT', 'FULL_JAR', 13.0, '{"WEIGHT": "1000"}');
+INSERT INTO product (name, unit, category, default_price, weight, flower)
+VALUES ('Pot 1KG', 'UNIT', 'FULL_JAR', 13.0, 1000, 'FOREST');
 INSERT INTO product (name, unit, category)
 VALUES ('Pot Vide 500G', 'UNIT', 'EMPTY_JAR');
-INSERT INTO product (name, unit, category, default_price, attributes_json)
-VALUES ('Pot 500G', 'UNIT', 'FULL_JAR', 7.0, '{"WEIGHT": "500G"}}');
+INSERT INTO product (name, unit, category, default_price, weight, flower)
+VALUES ('Pot 500G', 'UNIT', 'FULL_JAR', 7.0, 500, 'FOREST');
 INSERT INTO product (name, unit, category)
 VALUES ('Barquette Vide', 'UNIT', 'EMPTY_TRAY');
-INSERT INTO product (name, unit, category)
-VALUES ('Barquette', 'GRAM', 'FULL_TRAY');
-INSERT INTO product (name, unit, category)
-VALUES ('Miel Vrac', 'GRAM', 'BULK_HONEY');
+INSERT INTO product (name, unit, category, flower)
+VALUES ('Barquette', 'GRAM', 'FULL_TRAY', 'ALL_FLOWERS');
+INSERT INTO product (name, unit, category, flower)
+VALUES ('Miel Vrac', 'GRAM', 'BULK_HONEY', 'FOREST');
 INSERT INTO product (name, unit, category)
 VALUES ('Reine', 'UNIT', 'QUEEN');

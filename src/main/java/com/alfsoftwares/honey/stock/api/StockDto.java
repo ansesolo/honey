@@ -1,6 +1,5 @@
 package com.alfsoftwares.honey.stock.api;
 
-import com.alfsoftwares.honey.core.domain.model.Flower;
 import com.alfsoftwares.honey.core.domain.model.Unit;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,6 +15,5 @@ public record StockDto(
     String productName,
     Unit productUnit,
     Integer stockYear,
-    Flower flower,
     Integer quantity,
     BigDecimal averagePrice) {}

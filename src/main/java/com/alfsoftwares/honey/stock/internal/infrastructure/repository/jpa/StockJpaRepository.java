@@ -1,6 +1,5 @@
 package com.alfsoftwares.honey.stock.internal.infrastructure.repository.jpa;
 
-import com.alfsoftwares.honey.core.domain.model.Flower;
 import com.alfsoftwares.honey.stock.internal.domain.model.StockEntity;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,8 +12,7 @@ public interface StockJpaRepository extends JpaRepository<StockEntity, Long> {
 
   Optional<StockEntity> findByPublicId(UUID uuid);
 
-  Optional<StockEntity> findByStockYearAndProductIdAndFlower(
-      Integer year, UUID productId, Flower flower);
+  Optional<StockEntity> findByStockYearAndProductId(Integer year, UUID productId);
 
   @Modifying
   @Query(

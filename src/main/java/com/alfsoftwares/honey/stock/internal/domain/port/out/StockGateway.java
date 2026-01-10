@@ -1,6 +1,5 @@
 package com.alfsoftwares.honey.stock.internal.domain.port.out;
 
-import com.alfsoftwares.honey.core.domain.model.Flower;
 import com.alfsoftwares.honey.stock.internal.domain.model.StockEntity;
 import com.alfsoftwares.honey.stock.internal.domain.model.StockMovementEntity;
 import java.util.List;
@@ -17,7 +16,7 @@ public interface StockGateway {
 
   Optional<StockEntity> getStock(UUID stockId);
 
-  Optional<StockEntity> getStock(Integer year, UUID productId, Flower flower);
+  Optional<StockEntity> getStock(Integer year, UUID productId);
 
   void updateAveragePrice(UUID stockId);
 }

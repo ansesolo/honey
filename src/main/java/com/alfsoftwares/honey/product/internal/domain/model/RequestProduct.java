@@ -1,18 +1,19 @@
 package com.alfsoftwares.honey.product.internal.domain.model;
 
 import com.alfsoftwares.honey.core.domain.model.Category;
+import com.alfsoftwares.honey.core.domain.model.Flower;
 import com.alfsoftwares.honey.core.domain.model.Unit;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Map;
 
 public record RequestProduct(
     @NotBlank(message = "Name mandatory") String name,
     @NotNull(message = "Unit mandatory") Unit unit,
     BigDecimal defaultPrice,
     @NotNull(message = "Category mandatory") Category category,
-    Map<ProductAttributes, Object> attributes) {
+    Flower flower,
+    Integer weight) {
 
   public ProductEntity toEntity(ProductEntity dbEntity) {
     ProductEntity entity = new ProductEntity();
@@ -24,7 +25,8 @@ public record RequestProduct(
     entity.setUnit(unit);
     entity.setDefaultPrice(defaultPrice);
     entity.setCategory(category);
-    entity.setAttributes(attributes);
+    entity.setFlower(flower);
+    entity.setWeight(weight);
 
     return entity;
   }

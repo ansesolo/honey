@@ -1,6 +1,5 @@
 package com.alfsoftwares.honey.stock.internal.infrastructure.repository;
 
-import com.alfsoftwares.honey.core.domain.model.Flower;
 import com.alfsoftwares.honey.stock.internal.domain.model.StockEntity;
 import com.alfsoftwares.honey.stock.internal.domain.model.StockMovementEntity;
 import com.alfsoftwares.honey.stock.internal.domain.port.out.StockGateway;
@@ -42,8 +41,8 @@ public class StockRepository implements StockGateway {
   }
 
   @Override
-  public Optional<StockEntity> getStock(Integer year, UUID productId, Flower flower) {
-    return jpa.findByStockYearAndProductIdAndFlower(year, productId, flower);
+  public Optional<StockEntity> getStock(Integer year, UUID productId) {
+    return jpa.findByStockYearAndProductId(year, productId);
   }
 
   @Override

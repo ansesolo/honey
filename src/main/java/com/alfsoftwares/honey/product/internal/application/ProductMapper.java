@@ -16,6 +16,7 @@ public class ProductMapper {
         entity.getUnit(),
         entity.getDefaultPrice(),
         entity.getCategory(),
-        entity.getAttributes());
+        entity.getFlower(),
+        entity.getWeight());
   }
 }

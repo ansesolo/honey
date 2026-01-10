@@ -5,6 +5,7 @@ import com.alfsoftwares.honey.core.application.error.NotFoundException;
 import com.alfsoftwares.honey.product.api.ProductDto;
 import com.alfsoftwares.honey.product.api.ProductServiceApi;
 import com.alfsoftwares.honey.stock.internal.application.model.StockMovementRequest;
+import com.alfsoftwares.honey.stock.internal.domain.model.MovementType;
 import com.alfsoftwares.honey.stock.internal.domain.model.StockEntity;
 import com.alfsoftwares.honey.stock.internal.domain.model.StockMovementEntity;
 import com.alfsoftwares.honey.stock.internal.domain.port.in.StockMovementAdapter;
@@ -29,41 +30,29 @@ public class StockMovement implements StockMovementAdapter {
   @Override
   @Transactional
   public void createStockMovement(final StockMovementRequest stockMovement) {
-    if (stockMovement.quantity() == null
-        || stockMovement.quantity() <= 0) {
-      throw new InvalidRequestException("Quantity should be positive number");
-    }
     ProductDto product = productAdapter.getProduct(stockMovement.productId());
-
-    if (!stockMovement.type().getCategories().contains(product.category())) {
-      throw new InvalidRequestException("Unauthorized stock movement for this product category");
-    }
-
-    if (product.category().isNeedFlower() && stockMovement.flower() == null) {
-      throw new InvalidRequestException("Flower is needed for this stock movement");
-    }
 
     Integer year = stockMovement.movementDate().getYear();
 
     StockEntity stockEntity =
-        stockGateway
-            .getStock(year, product.publicId(), stockMovement.flower())
-            .orElseGet(StockEntity::new);
+        stockGateway.getStock(year, product.publicId()).orElseGet(StockEntity::new);
 
-    if (stockMovement.type().getSign() < 0) {
-      if (stockEntity.getQuantity() - stockMovement.quantity() < 0) {
-        throw new InvalidRequestException("Insufficient stock");
-      }
-    }
+    validStockMovement(stockMovement, product, stockEntity);
 
-    stockEntity.setStockYear(year);
-    stockEntity.setProductId(product.publicId());
-    stockEntity.setFlower(stockMovement.flower());
     Integer realValue = stockMovement.quantity() * stockMovement.type().getSign();
-    stockEntity.setQuantity(stockEntity.getQuantity() + realValue);
 
-    StockEntity savedEntity = stockGateway.save(stockEntity);
+    StockEntity savedEntity = updateStock(stockMovement, stockEntity, year, product, realValue);
+    createStockMovement(stockMovement, savedEntity, realValue);
+    stockGateway.updateAveragePrice(savedEntity.getPublicId());
 
+    // Manage stock of linked product
+    if (MovementType.PRODUCTION == stockMovement.type()) {}
+  }
+
+  private void createStockMovement(
+      final StockMovementRequest stockMovement,
+      final StockEntity savedEntity,
+      final Integer realValue) {
     StockMovementEntity stockMovementEntity = new StockMovementEntity();
     stockMovementEntity.setMovementDate(stockMovement.movementDate());
     stockMovementEntity.setStockId(savedEntity.getPublicId());
@@ -73,8 +62,36 @@ public class StockMovement implements StockMovementAdapter {
     stockMovementEntity.setReason(stockMovement.reason());
 
     stockGateway.save(stockMovementEntity);
+  }
 
-    stockGateway.updateAveragePrice(savedEntity.getPublicId());
+  private StockEntity updateStock(
+      final StockMovementRequest stockMovement,
+      final StockEntity stockEntity,
+      final Integer year,
+      final ProductDto product,
+      final Integer realValue) {
+    stockEntity.setStockYear(year);
+    stockEntity.setProductId(product.publicId());
+    stockEntity.setQuantity(stockEntity.getQuantity() + realValue);
+
+    return stockGateway.save(stockEntity);
+  }
+
+  private void validStockMovement(
+      final StockMovementRequest stockMovement, ProductDto product, StockEntity stockEntity) {
+    if (stockMovement.quantity() == null || stockMovement.quantity() <= 0) {
+      throw new InvalidRequestException("Quantity should be positive number");
+    }
+
+    if (!stockMovement.type().getCategories().contains(product.category())) {
+      throw new InvalidRequestException("Unauthorized stock movement for this product category");
+    }
+
+    if (stockMovement.type().getSign() < 0) {
+      if (stockEntity.getQuantity() - stockMovement.quantity() < 0) {
+        throw new InvalidRequestException("Insufficient stock");
+      }
+    }
   }
 
   @Override
